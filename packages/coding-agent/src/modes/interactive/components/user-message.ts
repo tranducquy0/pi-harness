@@ -55,6 +55,11 @@ export class UserMessageComponent extends Container {
 		this.outputPad = padding;
 	}
 
+	override invalidate(): void {
+		super.invalidate();
+		this.rebuild();
+	}
+
 	private rebuild(): void {
 		this.content.clear();
 		this.content.addChild(
