@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- Removed the `ArminComponent` and `DaxnutsComponent` exports from the package API and deleted the `/arminsayshi` easter-egg command. The `/dementedelves` announcement remains.
+
 ### Added
 
 - Added `ctx.modelRegistry.stream()` and `streamSimple()` for extension model calls through configured providers with resolved authentication ([#8964](https://github.com/earendil-works/pi/issues/8964)).
@@ -9,6 +13,11 @@
 
 ### Changed
 
+- Rewrote the built-in `dark` and `light` themes around a muted gray palette: accent, borders, selection, thinking states, and syntax highlighting are desaturated, while diff additions/removals stay green/red, errors stay red, warnings stay yellow, and markdown headings stay amber.
+- User messages render inside dim square brackets on the first and last content line instead of a filled background card.
+- Tool calls render as a plain dim title line with a streaming `...`, `ok`, or `FAIL` status suffix instead of state-tinted background boxes; custom and extension messages drop their tinted backgrounds too.
+- Selections across the shared list, settings, model, and extension pickers use a dim `>` cursor with bold text instead of an accent arrow.
+- The setup dialog drops its block-letter logo and the startup header shows `pi vX.Y.Z` as a single dim line; loaded-resource section headers are plain dim text without `[brackets]` or color.
 - Moved compaction, branch summarization, and retry spinners into the editor border alongside the working indicator. Custom editors use the same embedding opt-in for all status spinners.
 - Enabled strict-prefer JSON-schema sampling by default for built-in `read`, `bash`, `powershell`, `edit`, and `write` tools, without requiring `PI_EXPERIMENTAL`. Extensions can re-register tool definitions with `constrainedSampling: false`.
 
