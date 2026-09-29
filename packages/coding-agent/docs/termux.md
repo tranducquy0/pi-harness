@@ -30,7 +30,22 @@ pi
 
 `npm install -g @earendil-works/pi-coding-agent` works because the published tarball ships a prebuilt
 bundle. Building from a clone needs three workarounds, all of them environment issues rather than
-pi bugs.
+pi bugs. `scripts/termux-setup.sh` applies all three, builds, and links pi:
+
+```bash
+bash ./scripts/termux-setup.sh
+```
+
+Note the `bash` prefix: the script's own `#!/usr/bin/env bash` shebang cannot run on Termux, which
+is the problem it exists to fix. It accepts `--no-build` to skip the build and `--rebuild` to
+re-apply the shebang fixes after a build you ran yourself. Once pi is linked, rebuild with:
+
+```bash
+npm run build:offline && bash ./scripts/termux-setup.sh --rebuild
+```
+
+The rest of this section documents what the script does and why, in case you need to apply a single
+step by hand.
 
 ### 1. `tsgo` has no Android build
 
@@ -119,6 +134,7 @@ pi --version
 ```
 
 `npm link` symlinks the package directory, so rebuild and re-link after changing pi itself.
+`scripts/termux-setup.sh` does all of the above in one step.
 
 ## Clipboard Support
 
