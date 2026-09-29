@@ -167,7 +167,6 @@ import {
 	setRegisteredThemes,
 	stopThemeWatcher,
 	Theme,
-	type ThemeColor,
 	theme,
 } from "./theme/theme.ts";
 import { InteractiveThemeController } from "./theme/theme-controller.ts";
@@ -910,7 +909,7 @@ export class InteractiveMode {
 
 		// Add header with keybindings from config (unless silenced)
 		if (this.options.verbose || !this.settingsManager.getQuietStartup()) {
-			const logo = theme.bold(theme.fg("accent", APP_NAME)) + theme.fg("dim", ` v${this.version}`);
+			const logo = theme.fg("dim", `${APP_NAME} v${this.version}`);
 
 			// Build startup instructions using keybinding hint helpers
 			const hint = (keybinding: AppKeybinding, description: string) => keyHint(keybinding, description);
@@ -1653,7 +1652,7 @@ export class InteractiveMode {
 			return;
 		}
 
-		const sectionHeader = (name: string, color: ThemeColor = "mdHeading") => theme.fg(color, `[${name}]`);
+		const sectionHeader = (name: string) => theme.fg("dim", name);
 		const formatCompactList = (items: string[], options?: { sort?: boolean }): string => {
 			const labels = items.map((item) => item.trim()).filter((item) => item.length > 0);
 			if (options?.sort !== false) {
@@ -1665,7 +1664,6 @@ export class InteractiveMode {
 			name: string,
 			collapsedBody: string,
 			expandedBody = collapsedBody,
-			color: ThemeColor = "mdHeading",
 		): void => {
 			const section = new ExpandableText(
 				() => `${sectionHeader(name, color)}\n${collapsedBody}`,
@@ -1772,7 +1770,7 @@ export class InteractiveMode {
 						this.formatExtensionDisplayPath(this.getShortPath(item.path, item.sourceInfo)),
 				});
 				const extensionCompactList = formatCompactList(this.getCompactExtensionLabels(extensions));
-				addLoadedSection("Extensions", extensionCompactList, extList, "mdHeading");
+				addLoadedSection("Extensions", extensionCompactList, extList);
 			}
 
 			// Show loaded themes (excluding built-in)

@@ -26,8 +26,6 @@ const ANALYTICS_OPTIONS: Array<{ value: boolean; label: string }> = [
 	{ value: false, label: "Don't share" },
 ];
 
-const SETUP_LOGO_LINES = ["██████", "██  ██", "████  ██", "██    ██"];
-
 /** First-time setup dialog: theme choice and analytics opt-in. */
 export class FirstTimeSetupComponent extends Container {
 	private step: "theme" | "analytics" = "theme";
@@ -50,11 +48,7 @@ export class FirstTimeSetupComponent extends Container {
 		this.clear();
 		this.addChild(new DynamicBorder());
 		this.addChild(new Spacer(1));
-		this.addChild(new Text(theme.fg("accent", SETUP_LOGO_LINES.join("\n")), 1, 0));
-		this.addChild(new Spacer(1));
-		this.addChild(
-			new Text(theme.fg("accent", theme.bold(`Welcome to ${APP_NAME}, the minimal coding agent.`)), 1, 0),
-		);
+		this.addChild(new Text(theme.fg("dim", `Welcome to ${APP_NAME}, the minimal coding agent.`), 1, 0));
 		this.addChild(new Spacer(1));
 
 		if (this.step === "theme") {
