@@ -1664,8 +1664,8 @@ export class InteractiveMode {
 			expandedBody = collapsedBody,
 		): void => {
 			const section = new ExpandableText(
-				() => `${sectionHeader(name, color)}\n${collapsedBody}`,
-				() => `${sectionHeader(name, color)}\n${expandedBody}`,
+				() => `${sectionHeader(name)}\n${collapsedBody}`,
+				() => `${sectionHeader(name)}\n${expandedBody}`,
 				this.getStartupExpansionState(),
 				0,
 				0,

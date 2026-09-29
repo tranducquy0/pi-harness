@@ -159,7 +159,6 @@ export const editRenderers: Pick<ToolDefinition<any, any>, "renderCall" | "rende
 			component.preview = undefined;
 			component.previewArgsKey = argsKey;
 			component.previewPending = false;
-			component.settledError = false;
 		}
 
 		if (context.argsComplete && previewInput && !component.preview && !component.previewPending) {
