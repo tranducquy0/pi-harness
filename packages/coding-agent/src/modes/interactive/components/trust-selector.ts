@@ -108,7 +108,7 @@ export class TrustSelectorComponent extends Container {
 			const isSelected = i === this.selectedIndex;
 			const isCurrent = this.isSavedOption(option);
 			const currentMarker = isCurrent ? theme.fg("accent", "✓ ") : "  ";
-			const prefix = isSelected ? theme.fg("accent", "→ ") : "  ";
+			const prefix = isSelected ? theme.fg("dim", "> ") : "  ";
 			const label = isSelected ? theme.fg("accent", option.label) : theme.fg("text", option.label);
 			this.listContainer.addChild(new Text(`${prefix}${currentMarker}${label}`, 1, 0));
 		}

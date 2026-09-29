@@ -1208,8 +1208,8 @@ export function getMarkdownTheme(): MarkdownTheme {
 
 export function getSelectListTheme(): SelectListTheme {
 	return {
-		selectedPrefix: (text: string) => theme.fg("accent", text),
-		selectedText: (text: string) => theme.fg("accent", text),
+		selectedPrefix: (text: string) => theme.fg("dim", text),
+		selectedText: (text: string) => theme.bold(text),
 		description: (text: string) => theme.fg("muted", text),
 		scrollInfo: (text: string) => theme.fg("muted", text),
 		noMatch: (text: string) => theme.fg("muted", text),
@@ -1225,10 +1225,10 @@ export function getEditorTheme(): EditorTheme {
 
 export function getSettingsListTheme(): SettingsListTheme {
 	return {
-		label: (text: string, selected: boolean) => (selected ? theme.fg("accent", text) : text),
-		value: (text: string, selected: boolean) => (selected ? theme.fg("accent", text) : theme.fg("muted", text)),
+		label: (text: string, selected: boolean) => (selected ? theme.bold(text) : text),
+		value: (text: string, selected: boolean) => (selected ? theme.bold(text) : theme.fg("muted", text)),
 		description: (text: string) => theme.fg("dim", text),
-		cursor: theme.fg("accent", "→ "),
+		cursor: theme.fg("dim", "> "),
 		hint: (text: string) => theme.fg("dim", text),
 	};
 }

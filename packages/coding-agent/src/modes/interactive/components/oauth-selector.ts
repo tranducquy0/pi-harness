@@ -133,7 +133,7 @@ export class OAuthSelectorComponent extends Container implements Focusable {
 				: "";
 			let line = "";
 			if (isSelected) {
-				const prefix = theme.fg("accent", "→ ");
+				const prefix = theme.fg("dim", "> ");
 				const text = theme.fg("accent", provider.name);
 				line = prefix + text + authTypeLabel + statusIndicator;
 			} else {

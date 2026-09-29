@@ -103,8 +103,8 @@ export class FirstTimeSetupComponent extends Container {
 	private addOptionList(labels: string[], selectedIndex: number): void {
 		for (let i = 0; i < labels.length; i++) {
 			const isSelected = i === selectedIndex;
-			const prefix = isSelected ? theme.fg("accent", "→ ") : "  ";
-			const label = isSelected ? theme.fg("accent", labels[i]) : theme.fg("text", labels[i]);
+			const prefix = isSelected ? theme.fg("dim", "> ") : "  ";
+			const label = isSelected ? theme.bold(labels[i]) : theme.fg("text", labels[i]);
 			this.addChild(new Text(`${prefix}${label}`, 1, 0));
 		}
 	}

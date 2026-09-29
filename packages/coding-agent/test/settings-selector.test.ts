@@ -74,12 +74,12 @@ describe("SettingsSelectorComponent", () => {
 		list.handleInput("\r");
 		let output = stripAnsi(list.render(120).join("\n"));
 		expect(output).toContain("    Automatic");
-		expect(output).toContain("→ ✓ dark");
+		expect(output).toContain("> ✓ dark");
 
 		list.handleInput("\x1b[B");
 		output = stripAnsi(list.render(120).join("\n"));
 		expect(output).toContain("  ✓ dark");
-		expect(output).toContain("→   light");
+		expect(output).toContain(">   light");
 	});
 
 	it("keeps a configured automatic theme marked while browsing", () => {
@@ -99,12 +99,12 @@ describe("SettingsSelectorComponent", () => {
 		list.handleInput("\r");
 		list.handleInput("\r");
 		let output = stripAnsi(list.render(120).join("\n"));
-		expect(output).toContain("→ ✓ light");
+		expect(output).toContain("> ✓ light");
 
 		list.handleInput("\x1b[B");
 		output = stripAnsi(list.render(120).join("\n"));
 		expect(output).toContain("  ✓ light");
-		expect(output).toContain("→   other");
+		expect(output).toContain(">   other");
 	});
 
 	it("keeps the configured per-model thinking level marked while browsing", async () => {
@@ -127,12 +127,12 @@ describe("SettingsSelectorComponent", () => {
 		list.handleInput("\r");
 
 		let output = stripAnsi(list.render(120).join("\n"));
-		expect(output).toContain("→ ✓ medium");
+		expect(output).toContain("> ✓ medium");
 		expect(output).toContain("    (clear override)");
 
 		list.handleInput("\x1b[B");
 		output = stripAnsi(list.render(120).join("\n"));
 		expect(output).toContain("  ✓ medium");
-		expect(output).toContain("→   high");
+		expect(output).toContain(">   high");
 	});
 });
