@@ -33,14 +33,12 @@ type EditCallRenderComponent = Box & {
 	preview?: EditPreview;
 	previewArgsKey?: string;
 	previewPending?: boolean;
-	settledError?: boolean;
 };
 function createEditCallRenderComponent(): EditCallRenderComponent {
-	return Object.assign(new Box(1, 1, (text: string) => text), {
+	return Object.assign(new Box(1, 1), {
 		preview: undefined as EditPreview | undefined,
 		previewArgsKey: undefined as string | undefined,
 		previewPending: false,
-		settledError: false,
 	});
 }
 function getEditCallRenderComponent(state: EditRenderState, lastComponent: unknown): EditCallRenderComponent {
@@ -82,7 +80,7 @@ function getRenderablePreviewInput(args: RenderableEditArgs | undefined): { path
 }
 function formatEditCall(args: RenderableEditArgs | undefined, theme: Theme, cwd: string): string {
 	const pathDisplay = renderToolPath(str(args?.file_path ?? args?.path), theme, cwd);
-	return `${theme.fg("toolTitle", theme.bold("edit"))} ${pathDisplay}`;
+	return `${theme.fg("toolTitle", "edit")} ${pathDisplay}`;
 }
 function formatEditResult(
 	args: RenderableEditArgs | undefined,
@@ -112,29 +110,12 @@ function formatEditResult(
 
 	return undefined;
 }
-function getEditHeaderBg(
-	preview: EditPreview | undefined,
-	settledError: boolean | undefined,
-	theme: Theme,
-): (text: string) => string {
-	if (preview) {
-		if ("error" in preview) {
-			return (text: string) => theme.bg("toolErrorBg", text);
-		}
-		return (text: string) => theme.bg("toolSuccessBg", text);
-	}
-	if (settledError) {
-		return (text: string) => theme.bg("toolErrorBg", text);
-	}
-	return (text: string) => theme.bg("toolPendingBg", text);
-}
 function buildEditCallComponent(
 	component: EditCallRenderComponent,
 	args: RenderableEditArgs | undefined,
 	theme: Theme,
 	cwd: string,
 ): EditCallRenderComponent {
-	component.setBgFn(getEditHeaderBg(component.preview, component.settledError, theme));
 	component.clear();
 	component.addChild(new Text(formatEditCall(args, theme, cwd), 0, 0));
 
@@ -209,10 +190,6 @@ export const editRenderers: Pick<ToolDefinition<any, any>, "renderCall" | "rende
 						{ diff: resultDiff, firstChangedLine: typedResult.details?.firstChangedLine },
 						argsKey,
 					) || changed;
-			}
-			if (callComponent.settledError !== context.isError) {
-				callComponent.settledError = context.isError;
-				changed = true;
 			}
 			if (changed) {
 				buildEditCallComponent(callComponent, context.args as RenderableEditArgs | undefined, theme, context.cwd);

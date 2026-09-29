@@ -32,8 +32,8 @@ export class CustomMessageComponent extends Container {
 
 		this.addChild(new Spacer(1));
 
-		// Create box with purple background (used for default rendering)
-		this.box = new Box(1, 1, (t) => theme.bg("customMessageBg", t));
+		// Box frames default-rendered content without a background fill.
+		this.box = new Box(1, 1);
 
 		this.rebuild();
 	}

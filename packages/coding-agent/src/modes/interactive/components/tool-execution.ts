@@ -7,9 +7,12 @@ import {
 	Image,
 	MouseRegion,
 	Spacer,
+	stripTerminalSequences,
 	Text,
+	truncateToWidth,
 	type TUI,
 	type TuiMouseEvent,
+	visibleWidth,
 } from "@earendil-works/pi-tui";
 import type { ToolDefinition, ToolRenderContext, ToolRenderResultOptions } from "../../../core/extensions/types.ts";
 import type { Theme } from "../theme/theme.ts";
@@ -99,8 +102,8 @@ export class ToolExecutionComponent extends Container {
 		// Always create all shell variants. contentBox is used for default renderer-based composition.
 		// selfRenderContainer is used when the tool renders its own framing.
 		// contentText is reserved for generic fallback rendering when no tool definition exists.
-		this.contentBox = new Box(1, 1, (text: string) => theme.bg("toolPendingBg", text));
-		this.contentText = new Text("", 1, 1, (text: string) => theme.bg("toolPendingBg", text));
+		this.contentBox = new Box(1, 1);
+		this.contentText = new Text("", 1, 1);
 		this.contentTextRegion = this.createResultRegion(this.contentText);
 		this.selfRenderContainer = new Container();
 
@@ -150,7 +153,7 @@ export class ToolExecutionComponent extends Container {
 	}
 
 	private createCallFallback(): Component {
-		return new Text(theme.fg("toolTitle", theme.bold(this.toolName)), 0, 0);
+		return new Text(theme.fg("toolTitle", this.toolName), 0, 0);
 	}
 
 	private createResultFallback(): Component | undefined {
@@ -278,10 +281,36 @@ export class ToolExecutionComponent extends Container {
 					lines.push(...imageComponent.render(width));
 				}
 			}
-			return lines;
+			return this.appendStatus(lines, width);
 		}
 
-		return super.render(width);
+		return this.appendStatus(super.render(width), width);
+	}
+
+	/**
+	 * Append the pending/success/error state to the tool's title line. The title itself is rendered
+	 * by the tool, so it is located as the first line carrying any visible text.
+	 */
+	private appendStatus(lines: string[], width: number): string[] {
+		const status = this.renderStatus();
+		if (lines.length === 0) {
+			return lines;
+		}
+		const index = lines.findIndex((line) => visibleWidth(stripTerminalSequences(line)) > 0);
+		if (index === -1) {
+			return lines;
+		}
+		const result = [...lines];
+		const available = width - visibleWidth(status);
+		result[index] = available > 0 ? truncateToWidth(result[index], available, "") + status : result[index];
+		return result;
+	}
+
+	private renderStatus(): string {
+		if (this.isPartial) {
+			return theme.fg("dim", "  ...");
+		}
+		return this.result?.isError ? `  ${theme.fg("error", "FAIL")}` : theme.fg("dim", "  ok");
 	}
 
 	override handleMouse(event: TuiMouseEvent): ReturnType<Container["handleMouse"]> {
@@ -295,19 +324,10 @@ export class ToolExecutionComponent extends Container {
 	}
 
 	private updateDisplay(): void {
-		const bgFn = this.isPartial
-			? (text: string) => theme.bg("toolPendingBg", text)
-			: this.result?.isError
-				? (text: string) => theme.bg("toolErrorBg", text)
-				: (text: string) => theme.bg("toolSuccessBg", text);
-
 		let hasContent = false;
 		this.hideComponent = false;
 		if (this.hasRendererDefinition()) {
 			const renderContainer = this.getRenderShell() === "self" ? this.selfRenderContainer : this.contentBox;
-			if (renderContainer instanceof Box) {
-				renderContainer.setBgFn(bgFn);
-			}
 			renderContainer.clear();
 
 			const callRenderer = this.getCallRenderer();
@@ -357,7 +377,6 @@ export class ToolExecutionComponent extends Container {
 				}
 			}
 		} else {
-			this.contentText.setCustomBgFn(bgFn);
 			this.contentText.setText(this.formatToolExecution());
 			hasContent = true;
 		}
@@ -407,7 +426,7 @@ export class ToolExecutionComponent extends Container {
 	}
 
 	private formatToolExecution(): string {
-		let text = theme.fg("toolTitle", theme.bold(this.toolName));
+		let text = theme.fg("toolTitle", this.toolName);
 		const content = JSON.stringify(this.args, null, 2);
 		if (content) {
 			text += `\n\n${content}`;

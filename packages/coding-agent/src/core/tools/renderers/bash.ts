@@ -37,7 +37,7 @@ function formatShellCall(args: { command?: string; timeout?: number } | undefine
 	const timeout = args?.timeout as number | undefined;
 	const timeoutSuffix = timeout ? theme.fg("muted", ` (timeout ${timeout}s)`) : "";
 	const commandDisplay = command === null ? invalidArgText(theme) : command ? command : theme.fg("toolOutput", "...");
-	return theme.fg("toolTitle", theme.bold(`${prompt} ${commandDisplay}`)) + timeoutSuffix;
+	return theme.fg("toolTitle", `${prompt} ${commandDisplay}`) + timeoutSuffix;
 }
 function rebuildBashResultRenderComponent(
 	component: BashResultRenderComponent,
