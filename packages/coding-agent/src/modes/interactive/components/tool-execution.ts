@@ -289,14 +289,15 @@ export class ToolExecutionComponent extends Container {
 
 	/**
 	 * Append the pending/success/error state to the tool's title line. The title itself is rendered
-	 * by the tool, so it is located as the first line carrying any visible text.
+	 * by the tool, so it is located as the first line carrying non-whitespace text; self-rendered
+	 * tools pad their first lines, and those must not take the status.
 	 */
 	private appendStatus(lines: string[], width: number): string[] {
 		const status = this.renderStatus();
 		if (lines.length === 0) {
 			return lines;
 		}
-		const index = lines.findIndex((line) => visibleWidth(stripTerminalSequences(line)) > 0);
+		const index = lines.findIndex((line) => stripTerminalSequences(line).trim().length > 0);
 		if (index === -1) {
 			return lines;
 		}
