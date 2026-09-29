@@ -268,10 +268,27 @@ describe("AssistantMessageComponent", () => {
 
 		const paddedComponent = new UserMessageComponent("hello", undefined, 1);
 		const paddedLines = paddedComponent.render(40).map((line) => stripAnsi(line));
-		expect(paddedLines.some((line) => line.startsWith(" hello"))).toBe(true);
+		expect(paddedLines.some((line) => line.startsWith(" [ hello ]"))).toBe(true);
 
 		const unpaddedComponent = new UserMessageComponent("hello", undefined, 0);
 		const unpaddedLines = unpaddedComponent.render(40).map((line) => stripAnsi(line));
-		expect(unpaddedLines.some((line) => line.startsWith("hello"))).toBe(true);
+		expect(unpaddedLines.some((line) => line.startsWith("[ hello ]"))).toBe(true);
+	});
+
+	test("wraps multi-line user messages in brackets on the first and last line only", () => {
+		initTheme("dark");
+
+		const lines = new UserMessageComponent("first\n\nsecond", undefined, 1)
+			.render(40)
+			.map((line) => stripAnsi(line).trim());
+
+		const first = lines.findIndex((line) => line.startsWith("["));
+		const last = lines.findIndex((line) => line.endsWith("]"));
+		expect(first).toBeGreaterThan(0);
+		expect(last).toBeGreaterThan(first);
+		for (const line of lines.slice(first + 1, last)) {
+			expect(line.includes("[")).toBe(false);
+			expect(line.includes("]")).toBe(false);
+		}
 	});
 });
