@@ -106,6 +106,17 @@ pi
 
 Reference for environment variables and `auth.json` keys: [`const envMap`](https://github.com/earendil-works/pi/blob/main/packages/ai/src/env-api-keys.ts) in [`packages/ai/src/env-api-keys.ts`](https://github.com/earendil-works/pi/blob/main/packages/ai/src/env-api-keys.ts).
 
+#### OpenCode Zen Free Models
+
+OpenCode Zen periodically offers models at no cost, such as `big-pickle`, `space-bunny-free`,
+`longcat-2.5-preview-free`, `mimo-v2.6-flash-free`, `nemotron-3.5-lightning-free`, and
+`muse-spark-1.3-contributor-free`. They cost nothing per token, but Zen still requires an API key,
+so use the `opencode` provider with a key from <https://opencode.ai/zen>.
+
+Zen does not offer keyless access to the free models from other clients; its gateway accepts
+anonymous free-tier traffic only from the OpenCode client itself. pi therefore has no built-in
+keyless Zen provider. See [llama-cpp.md](llama-cpp.md) for providers that need no credentials at all.
+
 #### Auth File
 
 Store credentials in `~/.pi/agent/auth.json`:
