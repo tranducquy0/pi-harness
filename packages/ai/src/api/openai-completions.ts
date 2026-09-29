@@ -1609,6 +1609,7 @@ function detectCompat(model: Model<"openai-completions">): ResolvedOpenAIComplet
 		isZai ||
 		isMoonshot ||
 		provider === "opencode" ||
+		provider === "opencode-free" ||
 		baseUrl.includes("opencode.ai") ||
 		isCloudflareWorkersAI ||
 		isCloudflareAiGateway ||

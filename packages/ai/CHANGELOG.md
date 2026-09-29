@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added the keyless `opencode-free` provider, which discovers and streams OpenCode Zen free models.
 - Enabled native deferred tool loading for Fireworks Messages models. Use `ToolSearch` or `tool_search` as the loader name for prompt-prefix deferral ([#9323](https://github.com/earendil-works/pi/issues/9323)).
 
 ### Fixed

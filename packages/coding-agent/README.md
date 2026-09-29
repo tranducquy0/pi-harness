@@ -125,6 +125,7 @@ For each built-in provider, pi maintains a list of tool-capable models. Configur
 - ZAI Coding Plan (China)
 - OpenCode Zen
 - OpenCode Go
+- OpenCode Zen (Free)
 - Hugging Face
 - Fireworks
 - Together AI

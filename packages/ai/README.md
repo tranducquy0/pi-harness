@@ -84,6 +84,7 @@ Unified LLM API with provider collections, automatic auth resolution, token and 
 - **Amazon Bedrock**
 - **OpenCode Zen**
 - **OpenCode Go**
+- **OpenCode Zen (Free)**
 - **Fireworks** (uses OpenAI- and Anthropic-compatible APIs)
 - **Kimi For Coding** (Moonshot AI subscription endpoint, uses Anthropic-compatible API)
 - **Qwen Token Plan** (separate Individual and existing catalogs, with a separate China provider)
@@ -232,7 +233,7 @@ Snippets in the rest of this README assume a `models` collection set up like thi
 
 A **provider** is the runtime unit: it owns its model catalog, its auth (API key resolution, OAuth flows), and its stream behavior. A `Models` collection holds providers and routes every request to the provider that owns the model.
 
-Providers internally share **API implementations** (the wire protocols): Anthropic models use `anthropic-messages`, OpenAI uses `openai-responses`, while xAI, Groq, Cerebras, OpenRouter, and most others share `openai-completions`. Mixed-API providers (GitHub Copilot, OpenCode Zen) dispatch per model.
+Providers internally share **API implementations** (the wire protocols): Anthropic models use `anthropic-messages`, OpenAI uses `openai-responses`, while xAI, Groq, Cerebras, OpenRouter, and most others share `openai-completions`. Mixed-API providers (GitHub Copilot, OpenCode Zen) dispatch per model. OpenCode Zen (Free) discovers free models from Zen and models.dev and uses keyless OpenCode client headers.
 
 ### Provider Factories
 
@@ -439,6 +440,7 @@ Built-in providers resolve these env vars (Node.js; in browsers pass `apiKey` ex
 | Moonshot AI / Moonshot AI (China) | `MOONSHOT_API_KEY` |
 | Hugging Face | `HF_TOKEN` |
 | OpenCode Zen / OpenCode Go | `OPENCODE_API_KEY` |
+| OpenCode Zen (Free) | None (keyless) |
 | Kimi For Coding | `KIMI_API_KEY` |
 | Qwen Token Plan (existing catalog) | `QWEN_TOKEN_PLAN_API_KEY` |
 | Qwen Token Plan (Individual) | `QWEN_TOKEN_PLAN_API_KEY` |

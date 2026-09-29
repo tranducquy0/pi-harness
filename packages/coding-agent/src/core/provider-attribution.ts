@@ -69,6 +69,7 @@ function getSessionHeaders(model: Model<Api>, sessionId: string | undefined): Re
 	if (
 		model.provider !== "opencode" &&
 		model.provider !== "opencode-go" &&
+		model.provider !== "opencode-free" &&
 		!matchesHost(model.baseUrl, OPENCODE_HOST)
 	) {
 		return undefined;

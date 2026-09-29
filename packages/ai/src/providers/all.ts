@@ -29,6 +29,7 @@ import { openaiProvider } from "./openai.ts";
 import { openaiCodexProvider } from "./openai-codex.ts";
 import { opencodeProvider } from "./opencode.ts";
 import { opencodeGoProvider } from "./opencode-go.ts";
+import { opencodeFreeProvider } from "./opencode-free.ts";
 import { openrouterProvider } from "./openrouter.ts";
 import { openrouterImagesProvider } from "./openrouter-images.ts";
 import { qwenTokenPlanProvider } from "./qwen-token-plan.ts";
@@ -114,6 +115,7 @@ export function builtinProviders(): Provider[] {
 		openaiCodexProvider(),
 		opencodeProvider(),
 		opencodeGoProvider(),
+		opencodeFreeProvider(),
 		openrouterProvider(),
 		qwenTokenPlanProvider(),
 		qwenTokenPlanCnProvider(),

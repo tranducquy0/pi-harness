@@ -88,6 +88,7 @@ pi
 | ZAI Coding Plan (China) | `ZAI_CODING_CN_API_KEY` | `zai-coding-cn` |
 | OpenCode Zen | `OPENCODE_API_KEY` | `opencode` |
 | OpenCode Go | `OPENCODE_API_KEY` | `opencode-go` |
+| OpenCode Zen (Free) | None (keyless) | `opencode-free` |
 | Radius | `RADIUS_API_KEY` | `radius` |
 | Hugging Face | `HF_TOKEN` | `huggingface` |
 | Fireworks | `FIREWORKS_API_KEY` | `fireworks` |
@@ -108,14 +109,12 @@ Reference for environment variables and `auth.json` keys: [`const envMap`](https
 
 #### OpenCode Zen Free Models
 
+The built-in `opencode-free` provider discovers free models automatically and does not require an API key. Select a model with the `opencode-free/` provider prefix after refreshing models.
+
 OpenCode Zen periodically offers models at no cost, such as `big-pickle`, `space-bunny-free`,
 `longcat-2.5-preview-free`, `mimo-v2.6-flash-free`, `nemotron-3.5-lightning-free`, and
-`muse-spark-1.3-contributor-free`. They cost nothing per token, but Zen still requires an API key,
-so use the `opencode` provider with a key from <https://opencode.ai/zen>.
-
-Zen does not offer keyless access to the free models from other clients; its gateway accepts
-anonymous free-tier traffic only from the OpenCode client itself. pi therefore has no built-in
-keyless Zen provider. See [llama-cpp.md](llama-cpp.md) for providers that need no credentials at all.
+`muse-spark-1.3-contributor-free`. The built-in provider sends the OpenCode client headers required
+for anonymous free-tier access.
 
 #### Auth File
 
