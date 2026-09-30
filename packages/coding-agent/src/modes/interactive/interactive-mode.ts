@@ -555,6 +555,11 @@ export class InteractiveMode {
 		this.defaultEditor = new CustomEditor(this.ui, getEditorTheme(), this.keybindings, {
 			paddingX: editorPaddingX,
 			autocompleteMaxVisible,
+			prompt: "> ",
+			promptStyle: (text) => theme.fg("accent", text),
+			placeholder: "Build anything...",
+			placeholderStyle: (text) => theme.fg("muted", text),
+			showBorders: false,
 			embedWorkingStatus: true,
 		});
 		this.editor = this.defaultEditor;

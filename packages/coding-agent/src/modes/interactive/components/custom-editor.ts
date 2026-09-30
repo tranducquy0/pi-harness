@@ -31,6 +31,7 @@ export class CustomEditor extends Editor {
 
 	setWorkingStatusIndicator(indicator: StatusIndicator | undefined): void {
 		this.workingStatusIndicator = indicator;
+		this.setShowBorders(indicator !== undefined);
 	}
 
 	protected override renderTopBorder(width: number, hiddenLineCount: number): string {
