@@ -23,6 +23,7 @@
 
 ### Fixed
 
+- Fixed provider header config values rejecting `null`. Extensions that register `Authorization: null` to strip a header the SDK would otherwise send no longer throw during authentication, which surfaced as `model catalog could not be refreshed` after login. `registerProvider` now accepts `null` header values.
 - Capped agent-level retry backoff at `retry.maxAgentDelayMs` (60s by default) so long retry runs stay responsive during prolonged transient outages ([#8826](https://github.com/earendil-works/pi/issues/8826)).
 - Fixed direct RPC `steer` and `follow_up` commands bypassing extension `input` handlers ([#8718](https://github.com/earendil-works/pi/issues/8718)).
 - Fixed premature missing-model errors after login by waiting for catalog discovery. Radius now defaults to `balanced`, falling back to the first available Radius model when needed.

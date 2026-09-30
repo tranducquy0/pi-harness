@@ -49,7 +49,8 @@ export interface ProviderConfigInput {
 	apiKey?: string;
 	api?: Api;
 	streamSimple?: (model: Model<Api>, context: Context, options?: SimpleStreamOptions) => AssistantMessageEventStream;
-	headers?: Record<string, string>;
+	/** Header values may be null to delete a header the SDK would otherwise send. */
+	headers?: ProviderHeaders;
 	authHeader?: boolean;
 	oauth?: ExtensionOAuthConfig;
 	models?: Array<{
@@ -64,7 +65,7 @@ export interface ProviderConfigInput {
 		contextWindow: number;
 		maxTokens: number;
 		samplingParams?: Record<string, unknown>;
-		headers?: Record<string, string>;
+		headers?: ProviderHeaders;
 		compat?: Model<Api>["compat"];
 	}>;
 	refreshModels?(context: RefreshModelsContext): Promise<NonNullable<ProviderConfigInput["models"]>>;
@@ -266,7 +267,7 @@ function adaptOAuth(config: ExtensionOAuthConfig): OAuthAuth {
 
 function withConfiguredAuth(
 	auth: ModelAuth,
-	headers: Record<string, string> | undefined,
+	headers: ProviderHeaders | undefined,
 	authHeader: boolean,
 ): ModelAuth {
 	let mergedHeaders: ProviderHeaders | undefined =
@@ -288,18 +289,20 @@ function configuredApiKey(
 function configuredHeaders(
 	config: ModelsJsonProvider | undefined,
 	extension: ProviderConfigInput | undefined,
-): Record<string, string> | undefined {
+): ProviderHeaders | undefined {
 	if (!config?.headers && !extension?.headers) return undefined;
 	return { ...config?.headers, ...extension?.headers };
 }
 
 async function configContextEnv(
-	values: readonly string[],
+	values: readonly (string | null)[],
 	ctx: AuthContext,
 	explicit?: Record<string, string>,
 ): Promise<Record<string, string> | undefined> {
 	const env = { ...explicit };
-	for (const name of new Set(values.flatMap(getConfigValueEnvVarNames))) {
+	// null is ProviderHeaders' "delete this header" marker, not a config value.
+	const configValues = values.filter((value): value is string => value !== null);
+	for (const name of new Set(configValues.flatMap(getConfigValueEnvVarNames))) {
 		if (env[name] !== undefined) continue;
 		const value = await ctx.env(name);
 		if (value !== undefined) env[name] = value;
@@ -402,7 +405,7 @@ function rawModelHeaders(
 	model: Model<Api>,
 	config: ModelsJsonProvider | undefined,
 	extension: ProviderConfigInput | undefined,
-): Record<string, string> | undefined {
+): ProviderHeaders | undefined {
 	const definition = config?.models?.find((entry) => entry.id === model.id);
 	const extensionModel = extension?.models?.find((entry) => entry.id === model.id);
 	const headers = {
@@ -536,7 +539,7 @@ export function resolveConfiguredModelHeaders(
 	config: ModelsJsonProvider | undefined,
 	extension: ProviderConfigInput | undefined,
 	env?: Record<string, string>,
-): Record<string, string> | undefined {
+): ProviderHeaders | undefined {
 	return resolveHeadersOrThrow(
 		rawModelHeaders(model, config, extension),
 		`model "${model.provider}/${model.id}"`,

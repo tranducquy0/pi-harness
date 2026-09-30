@@ -6,6 +6,7 @@ import {
 	clearConfigValueCache,
 	resolveConfigValue,
 	resolveConfigValueUncached,
+	resolveHeadersOrThrow,
 } from "../src/core/resolve-config-value.ts";
 import * as shellModule from "../src/utils/shell.ts";
 
@@ -117,5 +118,42 @@ describe("resolveConfigValue", () => {
 		} finally {
 			if (platformDescriptor) Object.defineProperty(process, "platform", platformDescriptor);
 		}
+	});
+});
+
+describe("resolveHeadersOrThrow", () => {
+	test("keeps null header values as delete markers and resolves the rest", () => {
+		process.env.TEST_HEADER_TOKEN = "token";
+		try {
+			expect(
+				resolveHeadersOrThrow(
+					{
+						"x-opencode-client": "cli",
+						Authorization: null,
+						"x-api-token": "$TEST_HEADER_TOKEN",
+					},
+					'provider "test"',
+				),
+			).toEqual({
+				"x-opencode-client": "cli",
+				Authorization: null,
+				"x-api-token": "token",
+			});
+		} finally {
+			delete process.env.TEST_HEADER_TOKEN;
+		}
+	});
+
+	// Extensions like pi-opencode-free register `Authorization: null` to strip the
+	// header the SDK adds. Treating null as a config value threw a TypeError here,
+	// which surfaced as "model catalog could not be refreshed".
+	test("does not throw when an extension registers a null header value", () => {
+		expect(() => resolveHeadersOrThrow({ Authorization: null }, 'provider "opencode-free"')).not.toThrow();
+	});
+
+	test("still reports unresolvable string header values", () => {
+		expect(() => resolveHeadersOrThrow({ "x-key": "$TEST_HEADER_ABSENT" }, 'provider "test"')).toThrow(
+			/TEST_HEADER_ABSENT/,
+		);
 	});
 });
