@@ -2,35 +2,19 @@
 
 ## [0.0.3] - 2026-10-01
 
+## [0.0.3] - 2026-10-01
+
 ## [Unreleased]
 
-### Breaking Changes
-
-- Removed the `ArminComponent` and `DaxnutsComponent` exports from the package API and deleted the `/arminsayshi` easter-egg command. The `/dementedelves` announcement remains.
-
 ### Added
-
-- Added `ctx.modelRegistry.stream()` and `streamSimple()` for extension model calls through configured providers with resolved authentication ([#8964](https://github.com/earendil-works/pi/issues/8964)).
-- Added per-model `reserveTokens` and `keepRecentTokens` settings through `compaction.modelOverrides`, with ordinary compaction settings as fallback ([#8133](https://github.com/earendil-works/pi-mono/issues/8133)).
-
-### Changed
-
-- Rewrote the built-in `dark` and `light` themes around a muted gray palette: accent, borders, selection, thinking states, and syntax highlighting are desaturated, while diff additions/removals stay green/red, errors stay red, warnings stay yellow, and markdown headings stay amber.
-- User messages render inside dim square brackets on the first and last content line instead of a filled background card.
-- Tool calls render as a plain dim title line with a streaming `...`, `ok`, or `FAIL` status suffix instead of state-tinted background boxes; custom and extension messages drop their tinted backgrounds too.
-- Selections across the shared list, settings, model, and extension pickers use a dim `>` cursor with bold text instead of an accent arrow.
-- The setup dialog drops its block-letter logo and the startup header shows `pi vX.Y.Z` as a single dim line; loaded-resource section headers are plain dim text without `[brackets]` or color.
-- Moved compaction, branch summarization, and retry spinners into the editor border alongside the working indicator. Custom editors use the same embedding opt-in for all status spinners.
-- Enabled strict-prefer JSON-schema sampling by default for built-in `read`, `bash`, `powershell`, `edit`, and `write` tools, without requiring `PI_EXPERIMENTAL`. Extensions can re-register tool definitions with `constrainedSampling: false`.
+- Added Kimi provider migration and image model support ([#8075](https://github.com/earendil-works/pi/issues/8075)).
+- Added 'Running task...' placeholder during task execution.
+- Added extension API for theme engine.
+- Added single-line prompt input with ghost text.
+- Added local release and Termux build scripts.
 
 ### Fixed
-
-- Fixed provider header config values rejecting `null`. Extensions that register `Authorization: null` to strip a header the SDK would otherwise send no longer throw during authentication, which surfaced as `model catalog could not be refreshed` after login. `registerProvider` now accepts `null` header values.
-- Capped agent-level retry backoff at `retry.maxAgentDelayMs` (60s by default) so long retry runs stay responsive during prolonged transient outages ([#8826](https://github.com/earendil-works/pi/issues/8826)).
-- Fixed direct RPC `steer` and `follow_up` commands bypassing extension `input` handlers ([#8718](https://github.com/earendil-works/pi/issues/8718)).
-- Fixed premature missing-model errors after login by waiting for catalog discovery. Radius now defaults to `balanced`, falling back to the first available Radius model when needed.
-- Fixed fullscreen mode reserving a blank row for custom footers that render zero rows ([#8919](https://github.com/earendil-works/pi/issues/8919)).
-- Fixed extension tools without parameter schemas to be rejected during registration instead of breaking provider requests ([#9300](https://github.com/earendil-works/pi/issues/9300)).
+- Hardened OpenCode free provider discovery and requests.
 
 ## [0.85.1] - 2026-09-05
 
