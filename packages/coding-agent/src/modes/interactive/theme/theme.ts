@@ -25,6 +25,8 @@ import type { ThemeColorValue as ColorValue, ValidatedThemeJson as ThemeJson } f
 
 export type { ValidatedThemeJson as ThemeJson } from "./theme-json.ts";
 
+export type { ThemeInterface } from "./theme-interface.ts";
+
 export type ThemeJsonValidator = (label: string, json: unknown) => ThemeJson;
 
 let themeJsonValidator: ThemeJsonValidator | undefined;
@@ -558,7 +560,10 @@ export function loadThemeFromPath(themePath: string, mode?: ColorMode): Theme {
 	return createTheme(themeJson, mode, themePath);
 }
 
-function loadTheme(name: string, mode?: ColorMode): Theme {
+function loadTheme(name: string, mode?: ColorMode): ThemeInterface {
+	if (themeEngine) {
+		return themeEngine.loadTheme(name);
+	}
 	const registeredTheme = registeredThemes.get(name);
 	if (registeredTheme) {
 		return registeredTheme;
@@ -732,6 +737,26 @@ export function getDefaultTheme(): string {
 	return detectTerminalBackgroundFromEnv().theme;
 }
 
+import { DefaultTheme } from "./default-theme.ts";
+import type { ThemeInterface } from "./theme-interface.ts";
+
+// ... (existing imports)
+
+// ============================================================================
+// Theme Engine Extension
+// ============================================================================
+
+let themeEngine: ThemeEngine | undefined;
+
+export interface ThemeEngine {
+	loadTheme(name: string): ThemeInterface;
+	getAvailableThemes(): { name: string; path: string | undefined }[];
+}
+
+export function registerThemeEngine(engine: ThemeEngine): void {
+	themeEngine = engine;
+}
+
 // ============================================================================
 // Global Theme Instance
 // ============================================================================
@@ -742,26 +767,26 @@ const THEME_KEY_OLD = Symbol.for("@mariozechner/pi-coding-agent:theme");
 
 // Export theme as a getter that reads from globalThis
 // This ensures all module instances (tsx, jiti) see the same theme
-export const theme: Theme = new Proxy({} as Theme, {
+export const theme: ThemeInterface = new Proxy({} as ThemeInterface, {
 	get(_target, prop) {
-		const t = (globalThis as Record<symbol, Theme>)[THEME_KEY];
-		if (!t) throw new Error("Theme not initialized. Call initTheme() first.");
+		const t = (globalThis as Record<symbol, ThemeInterface>)[THEME_KEY];
+		if (!t) return (new DefaultTheme() as unknown as Record<string | symbol, unknown>)[prop];
 		return (t as unknown as Record<string | symbol, unknown>)[prop];
 	},
 });
 
-function setGlobalTheme(t: Theme): void {
-	(globalThis as Record<symbol, Theme>)[THEME_KEY] = t;
-	(globalThis as Record<symbol, Theme>)[THEME_KEY_OLD] = t;
+function setGlobalTheme(t: ThemeInterface): void {
+	(globalThis as Record<symbol, ThemeInterface>)[THEME_KEY] = t;
+	(globalThis as Record<symbol, ThemeInterface>)[THEME_KEY_OLD] = t;
 }
 
 let currentThemeName: string | undefined;
 let themeWatcher: fs.FSWatcher | undefined;
 let themeReloadTimer: NodeJS.Timeout | undefined;
 let onThemeChangeCallback: (() => void) | undefined;
-const registeredThemes = new Map<string, Theme>();
+const registeredThemes = new Map<string, ThemeInterface>();
 
-export function setRegisteredThemes(themes: Theme[]): void {
+export function setRegisteredThemes(themes: ThemeInterface[]): void {
 	registeredThemes.clear();
 	for (const theme of themes) {
 		if (theme.name) {
@@ -780,9 +805,9 @@ export function initTheme(themeName?: string, enableWatcher: boolean = false): v
 			startThemeWatcher();
 		}
 	} catch (_error) {
-		// Theme is invalid - fall back to dark theme silently
-		currentThemeName = "dark";
-		setGlobalTheme(loadTheme("dark"));
+		// Theme is invalid - fall back to DefaultTheme
+		currentThemeName = undefined;
+		setGlobalTheme(new DefaultTheme());
 		// Don't start watcher for fallback theme
 	}
 }
@@ -799,9 +824,9 @@ export function setTheme(name: string, enableWatcher: boolean = false): { succes
 		}
 		return { success: true };
 	} catch (error) {
-		// Theme is invalid - fall back to dark theme
-		currentThemeName = "dark";
-		setGlobalTheme(loadTheme("dark"));
+		// Theme is invalid - fall back to DefaultTheme
+		currentThemeName = undefined;
+		setGlobalTheme(new DefaultTheme());
 		// Don't start watcher for fallback theme
 		return {
 			success: false,
@@ -810,7 +835,7 @@ export function setTheme(name: string, enableWatcher: boolean = false): { succes
 	}
 }
 
-export function setThemeInstance(themeInstance: Theme): void {
+export function setThemeInstance(themeInstance: ThemeInterface): void {
 	setGlobalTheme(themeInstance);
 	currentThemeName = "<in-memory>";
 	stopThemeWatcher(); // Can't watch a direct instance
