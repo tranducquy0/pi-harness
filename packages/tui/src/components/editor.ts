@@ -302,7 +302,7 @@ export class Editor implements Component, Focusable {
 	private paddingX: number = 0;
 	private readonly prompt: string;
 	private readonly promptStyle: (text: string) => string;
-	private readonly placeholder: string;
+	private placeholder: string;
 	private readonly placeholderStyle: (text: string) => string;
 	private showBorders: boolean;
 
@@ -409,6 +409,13 @@ export class Editor implements Component, Focusable {
 	setShowBorders(show: boolean): void {
 		if (this.showBorders !== show) {
 			this.showBorders = show;
+			this.tui.requestRender();
+		}
+	}
+
+	setPlaceholder(placeholder: string): void {
+		if (this.placeholder !== placeholder) {
+			this.placeholder = placeholder;
 			this.tui.requestRender();
 		}
 	}

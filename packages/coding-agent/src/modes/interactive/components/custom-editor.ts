@@ -13,6 +13,8 @@ export type CustomEditorOptions = EditorOptions & {
 export class CustomEditor extends Editor {
 	private keybindings: KeybindingsManager;
 	private workingStatusIndicator: StatusIndicator | undefined;
+	private readonly defaultPlaceholder: string;
+	private readonly defaultShowBorders: boolean;
 	public readonly embedWorkingStatus: boolean;
 	public actionHandlers: Map<AppKeybinding, () => void> = new Map();
 
@@ -26,12 +28,16 @@ export class CustomEditor extends Editor {
 	constructor(tui: TUI, theme: EditorTheme, keybindings: KeybindingsManager, options?: CustomEditorOptions) {
 		super(tui, theme, options);
 		this.keybindings = keybindings;
+		this.defaultPlaceholder = options?.placeholder ?? "";
+		this.defaultShowBorders = options?.showBorders ?? true;
 		this.embedWorkingStatus = options?.embedWorkingStatus ?? false;
 	}
 
 	setWorkingStatusIndicator(indicator: StatusIndicator | undefined): void {
 		this.workingStatusIndicator = indicator;
-		this.setShowBorders(indicator !== undefined);
+		const isWorking = indicator?.kind === "working";
+		this.setPlaceholder(isWorking ? "Running task..." : this.defaultPlaceholder);
+		this.setShowBorders(indicator === undefined ? this.defaultShowBorders : !isWorking);
 	}
 
 	protected override renderTopBorder(width: number, hiddenLineCount: number): string {
