@@ -1405,7 +1405,12 @@ export interface ExtensionAPI {
 	/** Set the active tools by name. */
 	setActiveTools(toolNames: string[]): void;
 
-	/** Register a theme engine. */
+	/**
+	 * Register a theme engine, replacing the built-in JSON theme loader for every theme lookup.
+	 * There is one process-wide engine, so a later registration replaces an earlier one. Call this
+	 * from the extension factory, not at import time: registration is deferred until the extension
+	 * loads successfully.
+	 */
 	registerThemeEngine(engine: ThemeEngine): void;
 
 	/** Get available slash commands in the current session. */

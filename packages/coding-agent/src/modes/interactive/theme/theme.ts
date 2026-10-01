@@ -439,6 +439,18 @@ export function getAvailableThemesWithPaths(): ThemeInfo[] {
 		result.push(themeInfo);
 	};
 
+	// A theme engine replaces the built-in loader, so its themes are listed first and win the
+	// dedupe: a built-in name an engine also provides resolves to the engine's theme.
+	if (themeEngine) {
+		try {
+			for (const themeInfo of themeEngine.getAvailableThemes()) {
+				addTheme(themeInfo);
+			}
+		} catch {
+			// A failing engine must not break the picker; its loadTheme() errors surface on switch.
+		}
+	}
+
 	// Built-in themes
 	for (const name of Object.keys(getBuiltinThemes())) {
 		addTheme({ name, path: path.join(themesDir, `${name}.json`) });

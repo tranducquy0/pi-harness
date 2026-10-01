@@ -25,6 +25,7 @@ import { CONFIG_DIR_NAME, getAgentDir, isBunBinary, isBundledNode } from "../../
 // NOTE: This import works because loader.ts exports are NOT re-exported from index.ts,
 // avoiding a circular dependency. Extensions can import from @earendil-works/pi-coding-agent.
 import * as _bundledPiCodingAgent from "../../index.ts";
+import { registerThemeEngine } from "../../modes/interactive/theme/theme.ts";
 import { resolvePath } from "../../utils/paths.ts";
 import { createEventBus, type EventBus } from "../event-bus.ts";
 import type { ExecOptions } from "../exec.ts";
@@ -445,6 +446,12 @@ function createExtensionAPI(
 		unregisterProvider(name: string) {
 			assertActive();
 			applyRuntimeChange(() => runtime.unregisterProvider(name, extension.path));
+		},
+
+		registerThemeEngine(engine) {
+			assertActive();
+			// Deferred like provider registration so a failed load cannot install an engine.
+			applyRuntimeChange(() => registerThemeEngine(engine));
 		},
 
 		events: {
