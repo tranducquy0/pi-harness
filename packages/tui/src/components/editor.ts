@@ -17,6 +17,7 @@ import {
 	getWordSegmenter,
 	isWhitespaceChar,
 	sliceByColumn,
+	truncateToWidth,
 	visibleWidth,
 } from "../utils.ts";
 import { findWordBackward, findWordForward } from "../word-navigation.ts";
@@ -240,6 +241,11 @@ export interface EditorTheme {
 export interface EditorOptions {
 	paddingX?: number;
 	autocompleteMaxVisible?: number;
+	prompt?: string;
+	promptStyle?: (text: string) => string;
+	placeholder?: string;
+	placeholderStyle?: (text: string) => string;
+	showBorders?: boolean;
 }
 
 const SLASH_COMMAND_SELECT_LIST_LAYOUT: SelectListLayoutOptions = {
@@ -294,6 +300,11 @@ export class Editor implements Component, Focusable {
 	protected tui: TUI;
 	private theme: EditorTheme;
 	private paddingX: number = 0;
+	private readonly prompt: string;
+	private readonly promptStyle: (text: string) => string;
+	private placeholder: string;
+	private readonly placeholderStyle: (text: string) => string;
+	private showBorders: boolean;
 
 	// Store last render geometry for cursor navigation and mouse hit-testing.
 	private lastWidth: number = 80;
@@ -364,6 +375,11 @@ export class Editor implements Component, Focusable {
 		this.borderColor = theme.borderColor;
 		const paddingX = options.paddingX ?? 0;
 		this.paddingX = Number.isFinite(paddingX) ? Math.max(0, Math.floor(paddingX)) : 0;
+		this.prompt = options.prompt ?? "";
+		this.promptStyle = options.promptStyle ?? ((text) => text);
+		this.placeholder = options.placeholder ?? "";
+		this.placeholderStyle = options.placeholderStyle ?? ((text) => text);
+		this.showBorders = options.showBorders ?? true;
 		const maxVisible = options.autocompleteMaxVisible ?? 5;
 		this.autocompleteMaxVisible = Number.isFinite(maxVisible) ? Math.max(3, Math.min(20, Math.floor(maxVisible))) : 5;
 	}
@@ -386,6 +402,20 @@ export class Editor implements Component, Focusable {
 		const newPadding = Number.isFinite(padding) ? Math.max(0, Math.floor(padding)) : 0;
 		if (this.paddingX !== newPadding) {
 			this.paddingX = newPadding;
+			this.tui.requestRender();
+		}
+	}
+
+	setShowBorders(show: boolean): void {
+		if (this.showBorders !== show) {
+			this.showBorders = show;
+			this.tui.requestRender();
+		}
+	}
+
+	setPlaceholder(placeholder: string): void {
+		if (this.placeholder !== placeholder) {
+			this.placeholder = placeholder;
 			this.tui.requestRender();
 		}
 	}
@@ -505,10 +535,17 @@ export class Editor implements Component, Focusable {
 		return this.borderColor(border);
 	}
 
+	protected renderPrompt(): string {
+		return this.promptStyle(this.prompt);
+	}
+
 	render(width: number): string[] {
 		const maxPadding = Math.max(0, Math.floor((width - 1) / 2));
 		const paddingX = Math.min(this.paddingX, maxPadding);
-		const contentWidth = Math.max(1, width - paddingX * 2);
+		const outerContentWidth = Math.max(1, width - paddingX * 2);
+		const prompt = truncateToWidth(this.renderPrompt(), outerContentWidth, "");
+		const promptWidth = visibleWidth(prompt);
+		const contentWidth = Math.max(1, outerContentWidth - promptWidth);
 
 		// Layout width: with padding the cursor can overflow into it,
 		// without padding we reserve 1 column for the cursor.
@@ -548,7 +585,7 @@ export class Editor implements Component, Focusable {
 		const rightPadding = leftPadding;
 
 		// Render top border (with scroll indicator if scrolled down)
-		result.push(this.renderTopBorder(width, this.scrollOffset));
+		if (this.showBorders) result.push(this.renderTopBorder(width, this.scrollOffset));
 
 		// Render each visible layout line
 		// Emit hardware cursor marker when focused so TUI can position the
@@ -556,13 +593,32 @@ export class Editor implements Component, Focusable {
 		// autocomplete (e.g. slash-command menu) is visible.
 		const emitCursorMarker = this.focused;
 
-		for (const layoutLine of visibleLines) {
+		for (let visibleIndex = 0; visibleIndex < visibleLines.length; visibleIndex++) {
+			const layoutLine = visibleLines[visibleIndex]!;
 			let displayText = layoutLine.text;
 			let lineVisibleWidth = visibleWidth(layoutLine.text);
 			let cursorInPadding = false;
+			let placeholderRendered = false;
+
+			// Render ghost text without changing the editor value.
+			if (this.placeholder && this.isEditorEmpty() && layoutLine.hasCursor && layoutLine.cursorPos === 0) {
+				const ghostText = sliceByColumn(this.placeholder, 0, layoutWidth, true);
+				if (ghostText.length > 0) {
+					const ghostGraphemes = [...this.segment(ghostText, "grapheme")];
+					const firstGrapheme = ghostGraphemes[0]?.segment ?? "";
+					const rest = ghostText.slice(firstGrapheme.length);
+					const marker = emitCursorMarker ? CURSOR_MARKER : "";
+					displayText =
+						marker +
+						`\x1b[7m${this.placeholderStyle(firstGrapheme)}\x1b[0m` +
+						this.placeholderStyle(rest);
+					lineVisibleWidth = visibleWidth(ghostText);
+					placeholderRendered = true;
+				}
+			}
 
 			// Add cursor if this line has it
-			if (layoutLine.hasCursor && layoutLine.cursorPos !== undefined) {
+			if (!placeholderRendered && layoutLine.hasCursor && layoutLine.cursorPos !== undefined) {
 				const before = displayText.slice(0, layoutLine.cursorPos);
 				const after = displayText.slice(layoutLine.cursorPos);
 
@@ -593,14 +649,16 @@ export class Editor implements Component, Focusable {
 			// Calculate padding based on actual visible width
 			const padding = " ".repeat(Math.max(0, contentWidth - lineVisibleWidth));
 			const lineRightPadding = cursorInPadding ? rightPadding.slice(1) : rightPadding;
+			const isFirstLine = this.scrollOffset + visibleIndex === 0;
+			const linePrompt = isFirstLine ? prompt : " ".repeat(promptWidth);
 
 			// Render the line (no side borders, just horizontal lines above and below)
-			result.push(`${leftPadding}${displayText}${padding}${lineRightPadding}`);
+			result.push(`${leftPadding}${linePrompt}${displayText}${padding}${lineRightPadding}`);
 		}
 
 		// Render bottom border (with scroll indicator if more content below)
 		const linesBelow = layoutLines.length - (this.scrollOffset + visibleLines.length);
-		result.push(this.renderBottomBorder(width, linesBelow));
+		if (this.showBorders) result.push(this.renderBottomBorder(width, linesBelow));
 
 		// Add autocomplete list if active
 		this.renderedAutocompleteHeight = 0;
@@ -610,7 +668,7 @@ export class Editor implements Component, Focusable {
 			for (const line of autocompleteResult) {
 				const lineWidth = visibleWidth(line);
 				const linePadding = " ".repeat(Math.max(0, contentWidth - lineWidth));
-				result.push(`${leftPadding}${line}${linePadding}${rightPadding}`);
+				result.push(`${leftPadding}${" ".repeat(promptWidth)}${line}${linePadding}${rightPadding}`);
 			}
 		}
 
@@ -618,7 +676,7 @@ export class Editor implements Component, Focusable {
 	}
 
 	handleMouse(event: TuiMouseEvent): TuiMouseEventResult | undefined {
-		const autocompleteStartRow = this.renderedVisibleLineCount + 2;
+		const autocompleteStartRow = this.renderedVisibleLineCount + (this.showBorders ? 2 : 0);
 		if (
 			this.autocompleteState &&
 			this.autocompleteList &&
@@ -627,10 +685,12 @@ export class Editor implements Component, Focusable {
 		) {
 			const maxPadding = Math.max(0, Math.floor((event.width - 1) / 2));
 			const paddingX = Math.min(this.paddingX, maxPadding);
-			const contentWidth = Math.max(1, event.width - paddingX * 2);
+			const outerContentWidth = Math.max(1, event.width - paddingX * 2);
+			const promptWidth = visibleWidth(truncateToWidth(this.renderPrompt(), outerContentWidth, ""));
+			const contentWidth = Math.max(1, outerContentWidth - promptWidth);
 			const result = this.autocompleteList.handleMouse?.({
 				...event,
-				x: event.x - paddingX,
+				x: event.x - paddingX - promptWidth,
 				y: event.y - autocompleteStartRow,
 				width: contentWidth,
 				height: this.renderedAutocompleteHeight,
@@ -643,10 +703,13 @@ export class Editor implements Component, Focusable {
 		// The renderer synthesizes a click when press and release land on the same
 		// cell without movement, which is the gesture that positions the cursor.
 		if (event.type !== "click" || event.button !== "left") return undefined;
-		if (event.y <= 0 || event.y > this.renderedVisibleLineCount) return { handled: true, focus: true };
+		const contentStartRow = this.showBorders ? 1 : 0;
+		if (event.y < contentStartRow || event.y >= contentStartRow + this.renderedVisibleLineCount) {
+			return { handled: true, focus: true };
+		}
 
 		const visualLines = this.buildVisualLineMap(this.lastWidth);
-		const visualLineIndex = this.scrollOffset + event.y - 1;
+		const visualLineIndex = this.scrollOffset + event.y - contentStartRow;
 		const visualLine = visualLines[visualLineIndex];
 		if (!visualLine) return { handled: true, focus: true };
 		const logicalLine = this.state.lines[visualLine.logicalLine] ?? "";
@@ -654,7 +717,9 @@ export class Editor implements Component, Focusable {
 		const chunk = logicalLine.slice(visualLine.startCol, chunkEnd);
 		const maxPadding = Math.max(0, Math.floor((event.width - 1) / 2));
 		const paddingX = Math.min(this.paddingX, maxPadding);
-		const targetColumn = Math.max(0, event.x - paddingX);
+		const outerContentWidth = Math.max(1, event.width - paddingX * 2);
+		const promptWidth = visibleWidth(truncateToWidth(this.renderPrompt(), outerContentWidth, ""));
+		const targetColumn = Math.max(0, event.x - paddingX - promptWidth);
 		let visibleColumn = 0;
 		let targetIndex = chunk.length;
 		let lastGraphemeIndex = 0;

@@ -35,14 +35,14 @@ describe("status indicators", () => {
 		const indicator = new WorkingStatusIndicator(tui, "Working");
 		editor.setWorkingStatusIndicator(indicator);
 
-		expect(stripAnsi(editor.render(20)[0]!)).toBe("─".repeat(20));
+		expect(stripAnsi(editor.render(20)[0]!)).toContain("Running task...");
 		const standaloneLine = indicator.render(20)[1]!;
 		expect(standaloneLine).toContain(theme.getFgAnsi("accent"));
 		expect(standaloneLine).toContain(theme.getFgAnsi("muted"));
 		indicator.dispose();
 	});
 
-	it("embeds the working indicator when the editor opts in", () => {
+	it("shows a lightweight placeholder while a task is running", () => {
 		initTheme("dark");
 		const tui = {
 			requestRender: vi.fn(),
@@ -56,10 +56,7 @@ describe("status indicators", () => {
 		const indicator = new WorkingStatusIndicator(tui, "Working", undefined, (text) => editor.borderColor(text));
 		editor.setWorkingStatusIndicator(indicator);
 
-		const topBorder = editor.render(20)[0]!;
-		expect(stripAnsi(topBorder)).toBe("── ⠋ Working ───────");
-		expect(visibleWidth(topBorder)).toBe(20);
-		expect(topBorder.split(theme.getFgAnsi("thinkingHigh"))).toHaveLength(5);
+		expect(stripAnsi(editor.render(20)[0]!)).toContain("Running task...");
 		indicator.dispose();
 	});
 

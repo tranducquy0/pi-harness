@@ -2222,9 +2222,15 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 			}
 		}
 
-		// Process Kimi For Coding models
-		if (data["kimi-for-coding"]?.models) {
-			const kimiModels = data["kimi-for-coding"].models as Record<string, ModelsDevModel>;
+		// Process Kimi For Coding models.
+		// models.dev used to expose a single "kimi-for-coding" provider; it now splits the same
+		// catalog into "kimi-code-plan-cn" (api.kimi.com, the base URL below) and
+		// "kimi-code-plan-global" (api.kimi.ai). Read cn first so the metadata matches the
+		// endpoint, and fall back to global when cn disappears.
+		const kimiCodingProvider =
+			data["kimi-code-plan-cn"] ?? data["kimi-code-plan-global"] ?? data["kimi-for-coding"];
+		if (kimiCodingProvider?.models) {
+			const kimiModels = kimiCodingProvider.models as Record<string, ModelsDevModel>;
 			const hasCanonicalModel = Object.prototype.hasOwnProperty.call(kimiModels, "kimi-for-coding");
 
 			const kimiAliases = new Set(["k2p5", "k2p6", "k2p7"]);
