@@ -55,7 +55,8 @@
 		"release:fork:minor": "node scripts/fork-release.mjs minor",
 		"release:fork:major": "node scripts/fork-release.mjs major",
 		"release:fix-links": "node scripts/release-notes.mjs fix-github-releases",
-		"prepare": "husky"
+		"prepare": "husky",
+		"build:termux": "node scripts/build-termux.mjs"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sandbox-runtime": "0.0.26",
