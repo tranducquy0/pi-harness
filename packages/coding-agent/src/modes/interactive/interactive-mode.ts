@@ -164,8 +164,8 @@ import {
 	onThemeChange,
 	setRegisteredThemes,
 	stopThemeWatcher,
-	Theme,
 	theme,
+	type ThemeInterface,
 } from "./theme/theme.ts";
 import { InteractiveThemeController } from "./theme/theme-controller.ts";
 import { createInteractiveTui, createInteractiveTuiReference } from "./tui-renderer.ts";
@@ -2188,7 +2188,7 @@ export class InteractiveMode {
 	 */
 	private setExtensionWidget(
 		key: string,
-		content: string[] | ((tui: TUI, thm: Theme) => Component & { dispose?(): void }) | undefined,
+		content: string[] | ((tui: TUI, thm: ThemeInterface) => Component & { dispose?(): void }) | undefined,
 		options?: ExtensionWidgetOptions,
 	): void {
 		const placement = options?.placement ?? "aboveEditor";
@@ -2314,7 +2314,7 @@ export class InteractiveMode {
 	 */
 	private setExtensionFooter(
 		factory:
-			| ((tui: TUI, thm: Theme, footerData: ReadonlyFooterDataProvider) => Component & { dispose?(): void })
+			| ((tui: TUI, thm: ThemeInterface, footerData: ReadonlyFooterDataProvider) => Component & { dispose?(): void })
 			| undefined,
 	): void {
 		// Dispose existing custom footer
@@ -2339,7 +2339,9 @@ export class InteractiveMode {
 	/**
 	 * Set a custom header component, or restore the built-in header.
 	 */
-	private setExtensionHeader(factory: ((tui: TUI, thm: Theme) => Component & { dispose?(): void }) | undefined): void {
+	private setExtensionHeader(
+		factory: ((tui: TUI, thm: ThemeInterface) => Component & { dispose?(): void }) | undefined,
+	): void {
 		// Header may not be initialized yet if called during early initialization
 		if (!this.builtInHeader) {
 			return;
@@ -2459,7 +2461,9 @@ export class InteractiveMode {
 			getAllThemes: () => getAvailableThemesWithPaths(),
 			getTheme: (name) => getThemeByName(name),
 			setTheme: (themeOrName) => {
-				if (themeOrName instanceof Theme) {
+				// A theme engine may return any ThemeInterface implementation, so the
+				// name is the only reliable discriminator between the two forms.
+				if (typeof themeOrName !== "string") {
 					return this.themeController.setThemeInstance(themeOrName);
 				}
 				const result = this.themeController.setThemeName(themeOrName);
@@ -2746,7 +2750,7 @@ export class InteractiveMode {
 	private async showExtensionCustom<T>(
 		factory: (
 			tui: TUI,
-			theme: Theme,
+			theme: ThemeInterface,
 			keybindings: KeybindingsManager,
 			done: (result: T) => void,
 		) => (Component & { dispose?(): void }) | Promise<Component & { dispose?(): void }>,

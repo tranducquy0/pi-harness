@@ -2,7 +2,7 @@ import * as os from "node:os";
 import { pathToFileURL } from "node:url";
 import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 import { getCapabilities, getImageDimensions, hyperlink, imageFallback } from "@earendil-works/pi-tui";
-import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../modes/interactive/theme/theme.ts";
 import { stripAnsi } from "../../utils/ansi.ts";
 import { resolvePath } from "../../utils/paths.ts";
 import { sanitizeBinaryOutput } from "../../utils/shell.ts";
@@ -68,13 +68,13 @@ export type ToolRenderResultLike<TDetails> = {
 	details: TDetails;
 };
 
-export function invalidArgText(theme: Theme): string {
+export function invalidArgText(theme: ThemeInterface): string {
 	return theme.fg("error", "[invalid arg]");
 }
 
 export function renderToolPath(
 	rawPath: string | null,
-	theme: Theme,
+	theme: ThemeInterface,
 	cwd: string,
 	options?: { emptyFallback?: string },
 ): string {

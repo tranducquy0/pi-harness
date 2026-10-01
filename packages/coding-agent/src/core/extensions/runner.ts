@@ -5,7 +5,7 @@
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import type { ImageContent, Model, Provider, ProviderHeaders } from "@earendil-works/pi-ai";
 import type { KeyId } from "@earendil-works/pi-tui";
-import { type Theme, theme } from "../../modes/interactive/theme/theme.ts";
+import { type ThemeInterface, theme } from "../../modes/interactive/theme/theme.ts";
 import type { ResourceDiagnostic } from "../diagnostics.ts";
 import type { KeybindingsConfig } from "../keybindings.ts";
 import type { ModelRegistry } from "../model-registry.ts";
@@ -261,7 +261,7 @@ const noOpUIContext: ExtensionUIContext = {
 	},
 	getAllThemes: () => [],
 	getTheme: () => undefined,
-	setTheme: (_theme: string | Theme) => ({ success: false, error: "UI not available" }),
+	setTheme: (_theme: string | ThemeInterface) => ({ success: false, error: "UI not available" }),
 	getToolsExpanded: () => false,
 	setToolsExpanded: () => {},
 };

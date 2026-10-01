@@ -7,7 +7,7 @@
 
 import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 import type { Component } from "@earendil-works/pi-tui";
-import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderContext } from "../extensions/types.ts";
 import { ansiLinesToHtml } from "./ansi-to-html.ts";
 
@@ -15,7 +15,7 @@ export interface ToolHtmlRendererDeps {
 	/** Function to look up tool definition by name */
 	getToolDefinition: (name: string) => ToolDefinition | undefined;
 	/** Theme for styling */
-	theme: Theme;
+	theme: ThemeInterface;
 	/** Working directory for render context */
 	cwd: string;
 	/** Terminal width for rendering (default: 100) */

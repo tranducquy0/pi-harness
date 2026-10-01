@@ -1,5 +1,5 @@
 import { CancellableLoader, Container, Loader, Spacer, Text, type TUI } from "@earendil-works/pi-tui";
-import type { Theme } from "../theme/theme.ts";
+import type { ThemeInterface } from "../theme/theme.ts";
 import { DynamicBorder } from "./dynamic-border.ts";
 import { keyHint } from "./keybinding-hints.ts";
 
@@ -9,7 +9,7 @@ export class BorderedLoader extends Container {
 	private cancellable: boolean;
 	private signalController?: AbortController;
 
-	constructor(tui: TUI, theme: Theme, message: string, options?: { cancellable?: boolean }) {
+	constructor(tui: TUI, theme: ThemeInterface, message: string, options?: { cancellable?: boolean }) {
 		super();
 		this.cancellable = options?.cancellable ?? true;
 		const borderColor = (s: string) => theme.fg("border", s);

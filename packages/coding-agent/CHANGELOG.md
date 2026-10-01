@@ -14,6 +14,7 @@
 - Added local release and Termux build scripts.
 
 ### Fixed
+- Fixed the theme engine extension API dropping theme objects from a custom theme engine, and made all theme consumers accept `ThemeInterface`.
 - Hardened OpenCode free provider discovery and requests.
 
 ## [0.85.1] - 2026-09-05

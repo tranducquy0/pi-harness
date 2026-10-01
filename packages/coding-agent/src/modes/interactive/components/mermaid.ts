@@ -2,13 +2,13 @@ import { Marked, type Token } from "@earendil-works/pi-tui";
 import { type MermaidArt, render, type Span } from "grok-mermaid";
 import type { MarkdownTransformer } from "../../../core/extensions/types.ts";
 import type { MermaidRenderingMode } from "../../../core/settings-manager.ts";
-import type { Theme } from "../theme/theme.ts";
+import type { ThemeInterface } from "../theme/theme.ts";
 
 const markdownParser = new Marked();
 
 interface MermaidTransformerOptions {
 	getMode: () => MermaidRenderingMode;
-	theme?: Theme;
+	theme?: ThemeInterface;
 }
 
 function isMermaid(token: Token): token is Token & { type: "code"; text: string; lang?: string } {
@@ -35,7 +35,7 @@ function codeSpan(line: string): string {
 	return `${fence}${padding}${content}${padding}${fence}`;
 }
 
-function styleSpan(span: Span, theme: Theme): string {
+function styleSpan(span: Span, theme: ThemeInterface): string {
 	switch (span.cls) {
 		case "border":
 			return theme.fg("borderMuted", span.text);
@@ -52,7 +52,7 @@ function styleSpan(span: Span, theme: Theme): string {
 	}
 }
 
-function themedLines(art: MermaidArt, theme: Theme): string[] {
+function themedLines(art: MermaidArt, theme: ThemeInterface): string[] {
 	return art.styled.map((row) => row.map((span) => styleSpan(span, theme)).join(""));
 }
 

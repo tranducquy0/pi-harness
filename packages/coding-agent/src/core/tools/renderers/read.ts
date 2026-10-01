@@ -11,7 +11,7 @@ import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 import { Text } from "@earendil-works/pi-tui";
 import { getReadmePath } from "../../../config.ts";
 import { keyHint, keyText } from "../../../modes/interactive/components/keybinding-hints.ts";
-import { getLanguageFromPath, highlightCode, type Theme } from "../../../modes/interactive/theme/theme.ts";
+import { getLanguageFromPath, highlightCode, type ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import { formatPathRelativeToCwdOrAbsolute } from "../../../utils/paths.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";
 import { resolveToCwd } from "../path-utils.ts";
@@ -25,13 +25,13 @@ interface CompactReadClassification {
 }
 const COMPACT_RESOURCE_FILE_NAMES = new Set(["AGENTS.override.md", "AGENTS.md", "AGENTS.MD", "CLAUDE.md", "CLAUDE.MD"]);
 type ReadRenderArgs = { path?: string; file_path?: string; offset?: number; limit?: number };
-function formatReadLineRange(args: ReadRenderArgs | undefined, theme: Theme): string {
+function formatReadLineRange(args: ReadRenderArgs | undefined, theme: ThemeInterface): string {
 	if (args?.offset === undefined && args?.limit === undefined) return "";
 	const startLine = args.offset ?? 1;
 	const endLine = args.limit !== undefined ? startLine + args.limit - 1 : "";
 	return theme.fg("warning", `:${startLine}${endLine ? `-${endLine}` : ""}`);
 }
-function formatReadCall(args: ReadRenderArgs | undefined, theme: Theme, cwd: string): string {
+function formatReadCall(args: ReadRenderArgs | undefined, theme: ThemeInterface, cwd: string): string {
 	const pathDisplay = renderToolPath(str(args?.file_path ?? args?.path), theme, cwd);
 	return `${theme.fg("toolTitle", "read")} ${pathDisplay}${formatReadLineRange(args, theme)}`;
 }
@@ -88,7 +88,7 @@ function getCompactReadClassification(
 function formatCompactReadCall(
 	classification: CompactReadClassification,
 	args: ReadRenderArgs | undefined,
-	theme: Theme,
+	theme: ThemeInterface,
 ): string {
 	const expandHint = theme.fg("dim", ` (${keyText("app.tools.expand")} to expand)`);
 	if (classification.kind === "skill") {
@@ -112,7 +112,7 @@ function formatReadResult(
 	args: ReadRenderArgs | undefined,
 	result: { content: (TextContent | ImageContent)[]; details?: ReadToolDetails },
 	options: ToolRenderResultOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 	showImages: boolean,
 	_cwd: string,
 	isError: boolean,

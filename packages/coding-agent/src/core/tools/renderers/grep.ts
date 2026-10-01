@@ -8,7 +8,7 @@
 
 import { Text } from "@earendil-works/pi-tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
-import type { Theme } from "../../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";
 import type { GrepToolDetails } from "../grep.ts";
 import { getTextOutput, invalidArgText, shortenPath, str } from "../render-utils.ts";
@@ -16,7 +16,7 @@ import { DEFAULT_MAX_BYTES, formatSize } from "../truncate.ts";
 
 function formatGrepCall(
 	args: { pattern: string; path?: string; glob?: string; limit?: number } | undefined,
-	theme: Theme,
+	theme: ThemeInterface,
 ): string {
 	const pattern = str(args?.pattern);
 	const rawPath = str(args?.path);
@@ -39,7 +39,7 @@ function formatGrepResult(
 		details?: GrepToolDetails;
 	},
 	options: ToolRenderResultOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 	showImages: boolean,
 ): string {
 	const output = getTextOutput(result, showImages).trim();

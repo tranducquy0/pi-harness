@@ -18,7 +18,12 @@
  */
 
 import { StringEnum } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext, Theme, ToolExecutionMode } from "@earendil-works/pi-coding-agent";
+import type {
+	ExtensionAPI,
+	ExtensionContext,
+	ThemeInterface,
+	ToolExecutionMode,
+} from "@earendil-works/pi-coding-agent";
 import { type Component, matchesKey, Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
@@ -514,9 +519,9 @@ class BannerMessageComponent implements Component {
 	private readonly title: string;
 	private readonly details: BoardDetails | undefined;
 	private readonly expanded: boolean;
-	private readonly theme: Theme;
+	private readonly theme: ThemeInterface;
 
-	constructor(title: string, details: BoardDetails | undefined, expanded: boolean, theme: Theme) {
+	constructor(title: string, details: BoardDetails | undefined, expanded: boolean, theme: ThemeInterface) {
 		this.title = title;
 		this.details = details;
 		this.expanded = expanded;
@@ -548,9 +553,9 @@ class BannerMessageComponent implements Component {
 class GameOverMessageComponent implements Component {
 	private readonly status: GameStatus;
 	private readonly details: BoardDetails | undefined;
-	private readonly theme: Theme;
+	private readonly theme: ThemeInterface;
 
-	constructor(status: GameStatus, details: BoardDetails | undefined, theme: Theme) {
+	constructor(status: GameStatus, details: BoardDetails | undefined, theme: ThemeInterface) {
 		this.status = status;
 		this.details = details;
 		this.theme = theme;

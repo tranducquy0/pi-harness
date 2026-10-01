@@ -5,12 +5,12 @@
  * (logo + keybinding hints) with a custom component showing the pi mascot.
  */
 
-import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ThemeInterface } from "@earendil-works/pi-coding-agent";
 import { VERSION } from "@earendil-works/pi-coding-agent";
 
 // --- PI MASCOT ---
 // Based on pi_mascot.ts - the pi agent character
-function getPiMascot(theme: Theme): string[] {
+function getPiMascot(theme: ThemeInterface): string[] {
 	// --- COLORS ---
 	// 3b1b Blue: R=80, G=180, B=230
 	const piBlue = (text: string) => theme.fg("accent", text);

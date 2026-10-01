@@ -11,7 +11,7 @@
  */
 
 import { StringEnum } from "@earendil-works/pi-ai";
-import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, ThemeInterface } from "@earendil-works/pi-coding-agent";
 import { matchesKey, Text, truncateToWidth } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
@@ -39,12 +39,12 @@ const TodoParams = Type.Object({
  */
 class TodoListComponent {
 	private todos: Todo[];
-	private theme: Theme;
+	private theme: ThemeInterface;
 	private onClose: () => void;
 	private cachedWidth?: number;
 	private cachedLines?: string[];
 
-	constructor(todos: Todo[], theme: Theme, onClose: () => void) {
+	constructor(todos: Todo[], theme: ThemeInterface, onClose: () => void) {
 		this.todos = todos;
 		this.theme = theme;
 		this.onClose = onClose;

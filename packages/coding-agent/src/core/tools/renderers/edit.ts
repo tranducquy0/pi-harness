@@ -8,7 +8,7 @@
 
 import { Box, Container, Spacer, Text } from "@earendil-works/pi-tui";
 import { renderDiff } from "../../../modes/interactive/components/diff.ts";
-import type { Theme } from "../../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition } from "../../extensions/types.ts";
 import type { EditToolDetails } from "../edit.ts";
 import { computeEditsDiff, type Edit, type EditDiffError, type EditDiffResult } from "../edit-diff.ts";
@@ -78,7 +78,7 @@ function getRenderablePreviewInput(args: RenderableEditArgs | undefined): { path
 
 	return null;
 }
-function formatEditCall(args: RenderableEditArgs | undefined, theme: Theme, cwd: string): string {
+function formatEditCall(args: RenderableEditArgs | undefined, theme: ThemeInterface, cwd: string): string {
 	const pathDisplay = renderToolPath(str(args?.file_path ?? args?.path), theme, cwd);
 	return `${theme.fg("toolTitle", "edit")} ${pathDisplay}`;
 }
@@ -86,7 +86,7 @@ function formatEditResult(
 	args: RenderableEditArgs | undefined,
 	preview: EditPreview | undefined,
 	result: EditToolResultLike,
-	theme: Theme,
+	theme: ThemeInterface,
 	isError: boolean,
 ): string | undefined {
 	const rawPath = str(args?.file_path ?? args?.path);
@@ -113,7 +113,7 @@ function formatEditResult(
 function buildEditCallComponent(
 	component: EditCallRenderComponent,
 	args: RenderableEditArgs | undefined,
-	theme: Theme,
+	theme: ThemeInterface,
 	cwd: string,
 ): EditCallRenderComponent {
 	component.clear();

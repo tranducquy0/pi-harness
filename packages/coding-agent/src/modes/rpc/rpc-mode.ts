@@ -26,7 +26,7 @@ import {
 	writeRawStdout,
 } from "../../core/output-guard.ts";
 import { killTrackedDetachedChildren } from "../../utils/shell.ts";
-import { type Theme, theme } from "../interactive/theme/theme.ts";
+import { type ThemeInterface, theme } from "../interactive/theme/theme.ts";
 import { toJsonEvent } from "../json-event.ts";
 import { attachJsonlLineReader, serializeJsonLine } from "./jsonl.ts";
 import type {
@@ -295,7 +295,7 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 			return undefined;
 		},
 
-		setTheme(_theme: string | Theme) {
+		setTheme(_theme: string | ThemeInterface) {
 			// Theme switching not supported in RPC mode
 			return { success: false, error: "Theme switching not supported in RPC mode" };
 		},

@@ -15,6 +15,8 @@ import type { SourceInfo } from "../../../core/source-info.ts";
 import { closeWatcher, watchWithErrorHandler } from "../../../utils/fs-watch.ts";
 import { highlight, supportsLanguage } from "../../../utils/syntax-highlight.ts";
 import { stripBom } from "../../../utils/text.ts";
+import { DefaultTheme } from "./default-theme.ts";
+import type { ThemeEngine, ThemeInterface } from "./theme-interface.ts";
 
 // ============================================================================
 // Types & Schema
@@ -25,7 +27,7 @@ import type { ThemeColorValue as ColorValue, ValidatedThemeJson as ThemeJson } f
 
 export type { ValidatedThemeJson as ThemeJson } from "./theme-json.ts";
 
-export type { ThemeInterface } from "./theme-interface.ts";
+export type { ThemeEngine, ThemeInterface } from "./theme-interface.ts";
 
 export type ThemeJsonValidator = (label: string, json: unknown) => ThemeJson;
 
@@ -572,7 +574,7 @@ function loadTheme(name: string, mode?: ColorMode): ThemeInterface {
 	return createTheme(themeJson, mode);
 }
 
-export function getThemeByName(name: string): Theme | undefined {
+export function getThemeByName(name: string): ThemeInterface | undefined {
 	try {
 		return loadTheme(name);
 	} catch {
@@ -737,21 +739,11 @@ export function getDefaultTheme(): string {
 	return detectTerminalBackgroundFromEnv().theme;
 }
 
-import { DefaultTheme } from "./default-theme.ts";
-import type { ThemeInterface } from "./theme-interface.ts";
-
-// ... (existing imports)
-
 // ============================================================================
 // Theme Engine Extension
 // ============================================================================
 
 let themeEngine: ThemeEngine | undefined;
-
-export interface ThemeEngine {
-	loadTheme(name: string): ThemeInterface;
-	getAvailableThemes(): { name: string; path: string | undefined }[];
-}
 
 export function registerThemeEngine(engine: ThemeEngine): void {
 	themeEngine = engine;
@@ -767,10 +759,11 @@ const THEME_KEY_OLD = Symbol.for("@mariozechner/pi-coding-agent:theme");
 
 // Export theme as a getter that reads from globalThis
 // This ensures all module instances (tsx, jiti) see the same theme
+const FALLBACK_THEME = new DefaultTheme();
 export const theme: ThemeInterface = new Proxy({} as ThemeInterface, {
 	get(_target, prop) {
 		const t = (globalThis as Record<symbol, ThemeInterface>)[THEME_KEY];
-		if (!t) return (new DefaultTheme() as unknown as Record<string | symbol, unknown>)[prop];
+		if (!t) return (FALLBACK_THEME as unknown as Record<string | symbol, unknown>)[prop];
 		return (t as unknown as Record<string | symbol, unknown>)[prop];
 	},
 });
@@ -1055,10 +1048,10 @@ export function getThemeExportColors(themeName?: string): {
 
 type CliHighlightTheme = Record<string, (s: string) => string>;
 
-let cachedHighlightThemeFor: Theme | undefined;
+let cachedHighlightThemeFor: ThemeInterface | undefined;
 let cachedCliHighlightTheme: CliHighlightTheme | undefined;
 
-function buildCliHighlightTheme(t: Theme): CliHighlightTheme {
+function buildCliHighlightTheme(t: ThemeInterface): CliHighlightTheme {
 	return {
 		keyword: (s: string) => t.fg("syntaxKeyword", s),
 		built_in: (s: string) => t.fg("syntaxType", s),
@@ -1088,7 +1081,7 @@ function buildCliHighlightTheme(t: Theme): CliHighlightTheme {
 	};
 }
 
-function getCliHighlightTheme(t: Theme): CliHighlightTheme {
+function getCliHighlightTheme(t: ThemeInterface): CliHighlightTheme {
 	if (cachedHighlightThemeFor !== t || !cachedCliHighlightTheme) {
 		cachedHighlightThemeFor = t;
 		cachedCliHighlightTheme = buildCliHighlightTheme(t);

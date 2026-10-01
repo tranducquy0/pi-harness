@@ -1,11 +1,13 @@
+import * as path from "node:path";
 import { type RgbColor, resetCapabilitiesCache, setCapabilities } from "@earendil-works/pi-tui";
 import { afterEach, describe, expect, it } from "vitest";
+import { getThemesDir } from "../src/config.ts";
 import {
 	detectTerminalBackgroundFromEnv,
 	detectTerminalBackgroundTheme,
 	detectTerminalThemeForAuto,
-	getThemeByName,
 	getThemeForRgbColor,
+	loadThemeFromPath,
 	parseAutoThemeSetting,
 	resolveThemeSetting,
 } from "../src/modes/interactive/theme/theme.ts";
@@ -142,15 +144,15 @@ describe("detectTerminalThemeForAuto", () => {
 
 describe("theme color mode", () => {
 	it("uses terminal capabilities", () => {
+		const darkThemePath = path.join(getThemesDir(), "dark.json");
+
 		setCapabilities({ images: null, trueColor: false, hyperlinks: false });
-		const ansi256Theme = getThemeByName("dark");
-		if (!ansi256Theme) throw new Error("dark theme not found");
+		const ansi256Theme = loadThemeFromPath(darkThemePath);
 		expect(ansi256Theme.getColorMode()).toBe("256color");
 		expect(ansi256Theme.getFgAnsi("accent")).toMatch(/^\x1b\[38;5;\d+m$/);
 
 		setCapabilities({ images: null, trueColor: true, hyperlinks: false });
-		const truecolorTheme = getThemeByName("dark");
-		if (!truecolorTheme) throw new Error("dark theme not found");
+		const truecolorTheme = loadThemeFromPath(darkThemePath);
 		expect(truecolorTheme.getColorMode()).toBe("truecolor");
 		expect(truecolorTheme.getFgAnsi("accent")).toMatch(/^\x1b\[38;2;\d+;\d+;\d+m$/);
 	});

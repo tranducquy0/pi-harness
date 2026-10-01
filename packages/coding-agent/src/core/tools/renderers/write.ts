@@ -8,7 +8,7 @@
 
 import { Container, Text } from "@earendil-works/pi-tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
-import { getLanguageFromPath, highlightCode, type Theme } from "../../../modes/interactive/theme/theme.ts";
+import { getLanguageFromPath, highlightCode, type ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";
 import { normalizeDisplayText, renderToolPath, replaceTabs, str } from "../render-utils.ts";
 
@@ -96,7 +96,7 @@ function trimTrailingEmptyLines(lines: string[]): string[] {
 function formatWriteCall(
 	args: { path?: string; file_path?: string; content?: string } | undefined,
 	options: ToolRenderResultOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 	cache: WriteHighlightCache | undefined,
 	cwd: string,
 ): string {
@@ -127,7 +127,7 @@ function formatWriteCall(
 }
 function formatWriteResult(
 	result: { content: Array<{ type: string; text?: string; data?: string; mimeType?: string }>; isError?: boolean },
-	theme: Theme,
+	theme: ThemeInterface,
 ): string | undefined {
 	if (!result.isError) {
 		return undefined;

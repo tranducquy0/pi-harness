@@ -18,3 +18,9 @@ export interface ThemeInterface {
 	getThinkingBorderColor(level: ThinkingLevel): (str: string) => string;
 	getBashModeBorderColor(): (str: string) => string;
 }
+
+/** Supplies themes by name, replacing the built-in JSON theme loader. */
+export interface ThemeEngine {
+	loadTheme(name: string): ThemeInterface;
+	getAvailableThemes(): { name: string; path: string | undefined }[];
+}

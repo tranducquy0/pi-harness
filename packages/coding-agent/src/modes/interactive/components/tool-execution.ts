@@ -15,7 +15,7 @@ import {
 	visibleWidth,
 } from "@earendil-works/pi-tui";
 import type { ToolDefinition, ToolRenderContext, ToolRenderResultOptions } from "../../../core/extensions/types.ts";
-import type { Theme } from "../theme/theme.ts";
+import type { ThemeInterface } from "../theme/theme.ts";
 
 /**
  * What this component needs from a tool: how to draw it. It neither executes tools nor reads their
@@ -26,11 +26,11 @@ import type { Theme } from "../theme/theme.ts";
  */
 export interface ToolRenderers {
 	renderShell?: "default" | "self";
-	renderCall?: (args: any, theme: Theme, context: ToolRenderContext<any, any>) => Component;
+	renderCall?: (args: any, theme: ThemeInterface, context: ToolRenderContext<any, any>) => Component;
 	renderResult?: (
 		result: AgentToolResult<any>,
 		options: ToolRenderResultOptions,
-		theme: Theme,
+		theme: ThemeInterface,
 		context: ToolRenderContext<any, any>,
 	) => Component;
 }

@@ -8,13 +8,16 @@
 
 import { Text } from "@earendil-works/pi-tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
-import type { Theme } from "../../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";
 import type { FindToolDetails } from "../find.ts";
 import { getTextOutput, invalidArgText, shortenPath, str } from "../render-utils.ts";
 import { DEFAULT_MAX_BYTES, formatSize } from "../truncate.ts";
 
-function formatFindCall(args: { pattern: string; path?: string; limit?: number } | undefined, theme: Theme): string {
+function formatFindCall(
+	args: { pattern: string; path?: string; limit?: number } | undefined,
+	theme: ThemeInterface,
+): string {
 	const pattern = str(args?.pattern);
 	const rawPath = str(args?.path);
 	const path = rawPath !== null ? shortenPath(rawPath || ".") : null;
@@ -36,7 +39,7 @@ function formatFindResult(
 		details?: FindToolDetails;
 	},
 	options: ToolRenderResultOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 	showImages: boolean,
 ): string {
 	const output = getTextOutput(result, showImages).trim();

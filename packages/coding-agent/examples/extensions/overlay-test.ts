@@ -8,7 +8,7 @@
  * - Edge case tests (wide chars, styled text, emoji)
  */
 
-import type { ExtensionAPI, ExtensionCommandContext, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext, ThemeInterface } from "@earendil-works/pi-coding-agent";
 import { CURSOR_MARKER, type Focusable, matchesKey, visibleWidth } from "@earendil-works/pi-tui";
 
 export default function (pi: ExtensionAPI) {
@@ -42,10 +42,10 @@ class OverlayTestComponent implements Focusable {
 		{ label: "Cancel", hasInput: false, text: "", cursor: 0 },
 	];
 
-	private theme: Theme;
+	private theme: ThemeInterface;
 	private done: (result: { action: string; query?: string } | undefined) => void;
 
-	constructor(theme: Theme, done: (result: { action: string; query?: string } | undefined) => void) {
+	constructor(theme: ThemeInterface, done: (result: { action: string; query?: string } | undefined) => void) {
 		this.theme = theme;
 		this.done = done;
 	}

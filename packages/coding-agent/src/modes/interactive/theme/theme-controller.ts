@@ -10,7 +10,7 @@ import {
 	setTheme,
 	setThemeInstance,
 	type TerminalTheme,
-	type Theme,
+	type ThemeInterface,
 } from "./theme.ts";
 
 type ThemeResult = { success: boolean; error?: string };
@@ -98,7 +98,7 @@ export class InteractiveThemeController {
 		await this.applyFromSettings();
 	}
 
-	setThemeInstance(themeInstance: Theme): ThemeResult {
+	setThemeInstance(themeInstance: ThemeInterface): ThemeResult {
 		this.setAutoSync(false);
 		setThemeInstance(themeInstance);
 		this.activeThemeName = "<in-memory>";

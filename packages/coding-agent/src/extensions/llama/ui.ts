@@ -16,7 +16,7 @@ import type { ExtensionCommandContext } from "../../core/extensions/types.ts";
 import type { KeybindingsManager } from "../../core/keybindings.ts";
 import { DynamicBorder } from "../../modes/interactive/components/dynamic-border.ts";
 import { keyHint } from "../../modes/interactive/components/keybinding-hints.ts";
-import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../modes/interactive/theme/theme.ts";
 import type { LlamaModelInfo, LlamaProgress } from "./client.ts";
 import type { HuggingFaceModel } from "./huggingface.ts";
 
@@ -51,7 +51,7 @@ function modelDescription(model: LlamaModelInfo): string {
 	return details.join(" · ");
 }
 
-function selectTheme(theme: Theme) {
+function selectTheme(theme: ThemeInterface) {
 	return {
 		selectedPrefix: (text: string) => theme.fg("accent", text),
 		selectedText: (text: string) => theme.fg("accent", text),
@@ -61,7 +61,7 @@ function selectTheme(theme: Theme) {
 	};
 }
 
-function frame(theme: Theme, title: string, body: Component[], footer?: string): Container {
+function frame(theme: ThemeInterface, title: string, body: Component[], footer?: string): Container {
 	const container = new Container();
 	container.addChild(new DynamicBorder((text: string) => theme.fg("accent", text)));
 	container.addChild(new Text(theme.fg("accent", theme.bold(title)), 1, 0));
@@ -95,7 +95,7 @@ function compactCount(value: number): string {
 
 class HuggingFaceSearch extends Container implements Focusable {
 	private readonly tui: TUI;
-	private readonly theme: Theme;
+	private readonly theme: ThemeInterface;
 	private readonly keybindings: KeybindingsManager;
 	private readonly search: (query: string, signal: AbortSignal) => Promise<HuggingFaceModel[]>;
 	private readonly cache: Map<string, HuggingFaceModel[]>;
@@ -114,7 +114,7 @@ class HuggingFaceSearch extends Container implements Focusable {
 
 	constructor(
 		tui: TUI,
-		theme: Theme,
+		theme: ThemeInterface,
 		keybindings: KeybindingsManager,
 		search: (query: string, signal: AbortSignal) => Promise<HuggingFaceModel[]>,
 		cache: Map<string, HuggingFaceModel[]>,
@@ -275,7 +275,7 @@ class HuggingFaceSearch extends Container implements Focusable {
 
 class LlamaView implements LlamaUi, Focusable {
 	private readonly tui: TUI;
-	private readonly theme: Theme;
+	private readonly theme: ThemeInterface;
 	private readonly keybindings: KeybindingsManager;
 	private readonly searchCache = new Map<string, HuggingFaceModel[]>();
 	private content: Container;
@@ -286,7 +286,7 @@ class LlamaView implements LlamaUi, Focusable {
 	private showingProgress = false;
 	private _focused = false;
 
-	constructor(tui: TUI, theme: Theme, keybindings: KeybindingsManager) {
+	constructor(tui: TUI, theme: ThemeInterface, keybindings: KeybindingsManager) {
 		this.tui = tui;
 		this.theme = theme;
 		this.keybindings = keybindings;

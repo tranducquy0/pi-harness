@@ -45,7 +45,7 @@ import type {
 	TUI,
 } from "@earendil-works/pi-tui";
 import type { Static, TSchema } from "typebox";
-import type { ThemeInterface } from "../../modes/interactive/theme/theme-interface.ts";
+import type { ThemeEngine, ThemeInterface } from "../../modes/interactive/theme/theme-interface.ts";
 import type { BashResult } from "../bash-executor.ts";
 import type { CompactionPreparation, CompactionResult } from "../compaction/index.ts";
 import type { EventBus } from "../event-bus.ts";
@@ -172,7 +172,7 @@ export interface ExtensionUIContext {
 	setWidget(key: string, content: string[] | undefined, options?: ExtensionWidgetOptions): void;
 	setWidget(
 		key: string,
-		content: ((tui: TUI, theme: Theme) => Component & { dispose?(): void }) | undefined,
+		content: ((tui: TUI, theme: ThemeInterface) => Component & { dispose?(): void }) | undefined,
 		options?: ExtensionWidgetOptions,
 	): void;
 
@@ -184,12 +184,12 @@ export interface ExtensionUIContext {
 	 */
 	setFooter(
 		factory:
-			| ((tui: TUI, theme: Theme, footerData: ReadonlyFooterDataProvider) => Component & { dispose?(): void })
+			| ((tui: TUI, theme: ThemeInterface, footerData: ReadonlyFooterDataProvider) => Component & { dispose?(): void })
 			| undefined,
 	): void;
 
 	/** Set a custom header component (shown at startup, above chat), or undefined to restore the built-in header. */
-	setHeader(factory: ((tui: TUI, theme: Theme) => Component & { dispose?(): void }) | undefined): void;
+	setHeader(factory: ((tui: TUI, theme: ThemeInterface) => Component & { dispose?(): void }) | undefined): void;
 
 	/** Set the terminal window/tab title. */
 	setTitle(title: string): void;
@@ -198,7 +198,7 @@ export interface ExtensionUIContext {
 	custom<T>(
 		factory: (
 			tui: TUI,
-			theme: Theme,
+			theme: ThemeInterface,
 			keybindings: KeybindingsManager,
 			done: (result: T) => void,
 		) => (Component & { dispose?(): void }) | Promise<Component & { dispose?(): void }>,
@@ -265,16 +265,16 @@ export interface ExtensionUIContext {
 	getEditorComponent(): EditorFactory | undefined;
 
 	/** Get the current theme for styling. */
-	readonly theme: Theme;
+	readonly theme: ThemeInterface;
 
 	/** Get all available themes with their names and file paths. */
 	getAllThemes(): { name: string; path: string | undefined }[];
 
 	/** Load a theme by name without switching to it. Returns undefined if not found. */
-	getTheme(name: string): Theme | undefined;
+	getTheme(name: string): ThemeInterface | undefined;
 
-	/** Set the current theme by name or Theme object. */
-	setTheme(theme: string | Theme): { success: boolean; error?: string };
+	/** Set the current theme by name or ThemeInterface object. */
+	setTheme(theme: string | ThemeInterface): { success: boolean; error?: string };
 
 	/** Get current tool output expansion state. */
 	getToolsExpanded(): boolean;
@@ -405,11 +405,6 @@ export interface ReplacedSessionContext extends ExtensionCommandContext {
 	): Promise<void>;
 }
 
-export interface ThemeEngine {
-	loadTheme(name: string): ThemeInterface;
-	getAvailableThemes(): { name: string; path: string | undefined }[];
-}
-
 /** Rendering options for tool results */
 export interface ToolRenderResultOptions {
 	/** Whether the result view is expanded */
@@ -489,13 +484,17 @@ export interface ToolDefinition<TParams extends TSchema = TSchema, TDetails = un
 	): Promise<AgentToolResult<TDetails>>;
 
 	/** Custom rendering for tool call display */
-	renderCall?: (args: Static<TParams>, theme: Theme, context: ToolRenderContext<TState, Static<TParams>>) => Component;
+	renderCall?: (
+		args: Static<TParams>,
+		theme: ThemeInterface,
+		context: ToolRenderContext<TState, Static<TParams>>,
+	) => Component;
 
 	/** Custom rendering for tool result display */
 	renderResult?: (
 		result: AgentToolResult<TDetails>,
 		options: ToolRenderResultOptions,
-		theme: Theme,
+		theme: ThemeInterface,
 		context: ToolRenderContext<TState, Static<TParams>>,
 	) => Component;
 }
@@ -1214,13 +1213,13 @@ export interface EntryRenderOptions {
 export type MessageRenderer<T = unknown> = (
 	message: CustomMessage<T>,
 	options: MessageRenderOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 ) => Component | undefined;
 
 export type EntryRenderer<T = unknown> = (
 	entry: CustomEntry<T>,
 	options: EntryRenderOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 ) => Component | undefined;
 
 // ============================================================================

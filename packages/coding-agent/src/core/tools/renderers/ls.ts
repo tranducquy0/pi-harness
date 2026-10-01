@@ -8,13 +8,13 @@
 
 import { Text } from "@earendil-works/pi-tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
-import type { Theme } from "../../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";
 import type { LsToolDetails } from "../ls.ts";
 import { getTextOutput, renderToolPath, str } from "../render-utils.ts";
 import { DEFAULT_MAX_BYTES, formatSize } from "../truncate.ts";
 
-function formatLsCall(args: { path?: string; limit?: number } | undefined, theme: Theme, cwd: string): string {
+function formatLsCall(args: { path?: string; limit?: number } | undefined, theme: ThemeInterface, cwd: string): string {
 	const limit = args?.limit;
 	const pathDisplay = renderToolPath(str(args?.path), theme, cwd, { emptyFallback: "." });
 	let text = `${theme.fg("toolTitle", "ls")} ${pathDisplay}`;
@@ -29,7 +29,7 @@ function formatLsResult(
 		details?: LsToolDetails;
 	},
 	options: ToolRenderResultOptions,
-	theme: Theme,
+	theme: ThemeInterface,
 	showImages: boolean,
 ): string {
 	const output = getTextOutput(result, showImages).trim();
