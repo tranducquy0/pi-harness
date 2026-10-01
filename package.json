@@ -51,6 +51,9 @@
 		"release:patch": "node scripts/release.mjs patch",
 		"release:minor": "node scripts/release.mjs minor",
 		"release:major": "node scripts/release.mjs major",
+		"release:fork:patch": "node scripts/fork-release.mjs patch",
+		"release:fork:minor": "node scripts/fork-release.mjs minor",
+		"release:fork:major": "node scripts/fork-release.mjs major",
 		"release:fix-links": "node scripts/release-notes.mjs fix-github-releases",
 		"prepare": "husky"
 	},
