@@ -313,6 +313,36 @@ describe("Editor component", () => {
 		});
 	});
 
+	describe("Prompt rendering", () => {
+		it("renders a prompt and ghost text without borders", () => {
+			const editor = new Editor(createTestTUI(), defaultEditorTheme, {
+				prompt: "> ",
+				placeholder: "Build anything...",
+				showBorders: false,
+			});
+
+			const lines = editor.render(40);
+
+			assert.strictEqual(lines.length, 1);
+			assert.strictEqual(stripVTControlCharacters(lines[0]!).trimEnd(), "> Build anything...");
+			assert.strictEqual(editor.getText(), "");
+		});
+
+		it("hides ghost text after typing", () => {
+			const editor = new Editor(createTestTUI(), defaultEditorTheme, {
+				prompt: "> ",
+				placeholder: "Build anything...",
+				showBorders: false,
+			});
+
+			editor.handleInput("x");
+
+			const line = stripVTControlCharacters(editor.render(40)[0]!);
+			assert.ok(line.startsWith("> x"));
+			assert.ok(!line.includes("Build anything..."));
+		});
+	});
+
 	describe("Backslash+Enter newline workaround", () => {
 		it("inserts backslash immediately (no buffering)", () => {
 			const editor = new Editor(createTestTUI(), defaultEditorTheme);
