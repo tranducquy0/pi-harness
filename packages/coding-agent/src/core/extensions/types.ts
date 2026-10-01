@@ -45,7 +45,7 @@ import type {
 	TUI,
 } from "@earendil-works/pi-tui";
 import type { Static, TSchema } from "typebox";
-import type { Theme } from "../../modes/interactive/theme/theme.ts";
+import type { ThemeInterface } from "../../modes/interactive/theme/theme-interface.ts";
 import type { BashResult } from "../bash-executor.ts";
 import type { CompactionPreparation, CompactionResult } from "../compaction/index.ts";
 import type { EventBus } from "../event-bus.ts";
@@ -405,9 +405,10 @@ export interface ReplacedSessionContext extends ExtensionCommandContext {
 	): Promise<void>;
 }
 
-// ============================================================================
-// Tool Types
-// ============================================================================
+export interface ThemeEngine {
+	loadTheme(name: string): ThemeInterface;
+	getAvailableThemes(): { name: string; path: string | undefined }[];
+}
 
 /** Rendering options for tool results */
 export interface ToolRenderResultOptions {
@@ -1404,6 +1405,9 @@ export interface ExtensionAPI {
 
 	/** Set the active tools by name. */
 	setActiveTools(toolNames: string[]): void;
+
+	/** Register a theme engine. */
+	registerThemeEngine(engine: ThemeEngine): void;
 
 	/** Get available slash commands in the current session. */
 	getCommands(): SlashCommandInfo[];
