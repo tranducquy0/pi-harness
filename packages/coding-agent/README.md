@@ -1,39 +1,10 @@
-<p align="center">
-  <a href="https://pi.dev">
-    <img alt="pi logo" src="https://pi.dev/logo-auto.svg" width="128">
-  </a>
-</p>
-<p align="center">
-  <a href="https://discord.com/invite/3cU7Bz4UPx"><img alt="Discord" src="https://img.shields.io/badge/discord-community-5865F2?style=flat-square&logo=discord&logoColor=white" /></a>
-  <a href="https://www.npmjs.com/package/@earendil-works/pi-coding-agent"><img alt="npm" src="https://img.shields.io/npm/v/@earendil-works/pi-coding-agent?style=flat-square" /></a>
-</p>
+# Pi Coding Agent
 
-> New issues and PRs from new contributors are auto-closed by default. Maintainers review auto-closed issues daily. See [CONTRIBUTING.md](../../CONTRIBUTING.md).
+This package is the terminal coding-agent application in [Pi Harness](https://github.com/tranducquy0/pi-harness), a fork of Pi focused on simplicity and usability.
 
----
+Pi is designed to be useful immediately without forcing a particular workflow. The default agent has a small set of file and shell tools, while extensions, skills, prompt templates, themes, and packages provide opt-in customization. Pi runs in interactive, print/JSON, RPC, and SDK modes.
 
-Pi is a minimal terminal coding harness. Adapt pi to your workflows, not the other way around, without having to fork and modify pi internals. Extend it with TypeScript [Extensions](#extensions), [Skills](#skills), [Prompt Templates](#prompt-templates), and [Themes](#themes). Put your extensions, skills, prompt templates, and themes in [Pi Packages](#pi-packages) and share them with others via npm or git.
-
-Pi ships with powerful defaults but skips features like sub agents and plan mode. Instead, you can ask pi to build what you want or install a third party pi package that matches your workflow.
-
-Pi runs in four modes: interactive, print or JSON, RPC for process integration, and an SDK for embedding in your own apps.
-
-## Share your OSS coding agent sessions
-
-If you use pi for open source work, please share your coding agent sessions.
-
-Public OSS session data helps improve models, prompts, tools, and evaluations using real development workflows.
-
-For the full explanation, see [this post on X](https://x.com/badlogicgames/status/2037811643774652911).
-
-To publish sessions, use [`badlogic/pi-share-hf`](https://github.com/badlogic/pi-share-hf). Read its README.md for setup instructions. All you need is a Hugging Face account, the Hugging Face CLI, and `pi-share-hf`.
-
-You can also watch [this video](https://x.com/badlogicgames/status/2041151967695634619), where I show how I publish my `pi-mono` sessions.
-
-I regularly publish my own `pi-mono` work sessions here:
-
-- [badlogicgames/pi-mono on Hugging Face](https://huggingface.co/datasets/badlogicgames/pi-mono)
-
+The main documentation is in [`docs/`](docs/index.md). Start with the [quickstart](docs/quickstart.md), or read the [usage guide](docs/usage.md) for interactive mode and the CLI.
 ## Table of Contents
 
 - [Quick Start](#quick-start)
@@ -67,12 +38,6 @@ npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 ```
 
 `--ignore-scripts` disables dependency lifecycle scripts during install. Pi does not require install scripts for normal npm installs.
-
-Installer alternative:
-
-```bash
-curl -fsSL https://pi.dev/install.sh | sh
-```
 
 Authenticate with an API key:
 
@@ -509,7 +474,7 @@ Pi is aggressively extensible so it doesn't have to dictate your workflow. Featu
 
 **No background bash.** Use tmux. Full observability, direct interaction.
 
-Read the [blog post](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/) for the full rationale.
+This fork keeps that direction while prioritizing a clear default workflow and practical usability.
 
 ---
 
@@ -712,8 +677,3 @@ MIT
 - [@earendil-works/pi-agent-core](https://www.npmjs.com/package/@earendil-works/pi-agent-core): Agent framework
 - [@earendil-works/pi-tui](https://www.npmjs.com/package/@earendil-works/pi-tui): Terminal UI components
 
-<p align="center">
-  <a href="https://pi.dev">pi.dev</a> domain graciously donated by
-  <br /><br />
-  <a href="https://exe.dev"><img src="docs/images/exy.png" alt="Exy mascot" width="48" /><br />exe.dev</a>
-</p>

@@ -14,10 +14,10 @@ npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 
 ### Uninstall
 
-Use the package manager that installed pi. The curl installer uses npm globally, so curl and npm installs are removed with npm:
+Use the package manager that installed Pi:
 
 ```bash
-# curl installer or npm install -g
+# npm install -g
 npm uninstall -g @earendil-works/pi-coding-agent
 
 # pnpm
@@ -30,7 +30,7 @@ yarn global remove @earendil-works/pi-coding-agent
 bun uninstall -g @earendil-works/pi-coding-agent
 ```
 
-Uninstalling pi leaves settings, credentials, sessions, and installed pi packages in `~/.pi/agent/`.
+Uninstalling Pi leaves settings, credentials, sessions, and installed packages in `~/.pi/agent/`.
 
 Then start pi in the project directory you want it to work on:
 

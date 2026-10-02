@@ -1,10 +1,12 @@
-# Pi Documentation
+# Pi Harness Documentation
 
-Pi is a minimal terminal coding harness. It is designed to stay small at the core while being extended through TypeScript extensions, skills, prompt templates, themes, and pi packages.
+Pi Harness is a fork of Pi focused on simplicity and usability. It provides a small terminal coding agent with useful defaults and opt-in extension points for workflows that need more.
+
+The core stays focused on working in a project directory: inspect files, make changes, run commands, and keep the conversation available through sessions. Extensions, skills, prompt templates, themes, and packages add capabilities without making the default experience harder to understand.
 
 ## Quick start
 
-Install Pi with npm:
+Install the coding agent with npm:
 
 ```bash
 npm install -g --ignore-scripts @earendil-works/pi-coding-agent
@@ -12,13 +14,7 @@ npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 
 `--ignore-scripts` disables dependency lifecycle scripts during install. Pi does not require install scripts for normal npm installs.
 
-On Linux or macOS, you can also use the installer:
-
-```bash
-curl -fsSL https://pi.dev/install.sh | sh
-```
-
-To uninstall pi itself, use npm for curl and npm installs:
+To uninstall Pi, use npm for npm installs:
 
 ```bash
 npm uninstall -g @earendil-works/pi-coding-agent
