@@ -761,6 +761,17 @@ export function registerThemeEngine(engine: ThemeEngine): void {
 	themeEngine = engine;
 }
 
+/**
+ * Drop the registered engine so theme lookups fall back to the built-in loader.
+ *
+ * The engine belongs to the currently loaded extension set, so this must run before extensions are
+ * re-loaded: an engine is re-installed by the factory of whichever extension registered it. Clearing
+ * afterwards would drop the engine the fresh load just installed.
+ */
+export function clearThemeEngine(): void {
+	themeEngine = undefined;
+}
+
 // ============================================================================
 // Global Theme Instance
 // ============================================================================

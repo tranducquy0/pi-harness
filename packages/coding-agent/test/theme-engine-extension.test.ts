@@ -126,4 +126,51 @@ describe("theme engine extension API", () => {
 		expect(harness.getThemeByName("ghost")).toBeUndefined();
 		expect(harness.getAvailableThemes()).toEqual(expect.arrayContaining(["dark", "light"]));
 	});
+
+	it("drops the engine when a reload no longer loads the extension that registered it", async () => {
+		vi.resetModules();
+		const themeModule = await import("../src/modes/interactive/theme/theme.ts");
+		const { DefaultResourceLoader } = await import("../src/core/resource-loader.ts");
+
+		const enginePath = path.join(extensionsDir, "engine.ts");
+		fs.writeFileSync(enginePath, engineSource("alpha", ["solarized"]));
+		const loader = new DefaultResourceLoader({
+			cwd: tempDir,
+			agentDir: tempDir,
+			noSkills: true,
+			noPromptTemplates: true,
+			noThemes: true,
+		});
+
+		await loader.reload();
+		expect(themeModule.getThemeByName("solarized")?.fg("accent", "x")).toBe("<alpha:solarized:x>");
+
+		fs.rmSync(enginePath);
+		await loader.reload();
+
+		expect(themeModule.getAvailableThemes()).not.toContain("solarized");
+		expect(themeModule.getThemeByName("solarized")).toBeUndefined();
+		// The engine must not keep intercepting built-in theme lookups either.
+		expect(themeModule.getThemeByName("dark")?.name).toBe("dark");
+	});
+
+	it("keeps the engine when a reload still loads the extension that registered it", async () => {
+		vi.resetModules();
+		const themeModule = await import("../src/modes/interactive/theme/theme.ts");
+		const { DefaultResourceLoader } = await import("../src/core/resource-loader.ts");
+
+		fs.writeFileSync(path.join(extensionsDir, "engine.ts"), engineSource("alpha", ["solarized"]));
+		const loader = new DefaultResourceLoader({
+			cwd: tempDir,
+			agentDir: tempDir,
+			noSkills: true,
+			noPromptTemplates: true,
+			noThemes: true,
+		});
+
+		await loader.reload();
+		await loader.reload();
+
+		expect(themeModule.getThemeByName("solarized")?.fg("accent", "x")).toBe("<alpha:solarized:x>");
+	});
 });

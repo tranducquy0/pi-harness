@@ -16,6 +16,7 @@
 ### Fixed
 - Fixed the theme engine extension API dropping theme objects from a custom theme engine, and made all theme consumers accept `ThemeInterface`.
 - Fixed `registerThemeEngine` not being wired to the extension API, and a theme engine's themes not appearing in the theme picker.
+- Fixed a theme engine staying installed after a reload stopped loading the extension that registered it.
 - Hardened OpenCode free provider discovery and requests.
 
 ## [0.85.1] - 2026-09-05
