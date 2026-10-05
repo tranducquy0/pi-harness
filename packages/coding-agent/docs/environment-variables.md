@@ -96,4 +96,6 @@ These variables are read by Pi itself:
 
 Provider credentials such as `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and cloud-provider configuration are listed in [Providers](providers.md#environment-variables-or-auth-file).
 
+The built-in Exa web search tool uses `EXA_API_KEY`. When set, it exposes model-facing `search` calls backed by Exa's Search API.
+
 `PI_SERVER_DIR` and `PI_SERVER_ID` apply only to the source-only [experimental remote harness](development.md#experimental-remote-harness), not distributed builds.
